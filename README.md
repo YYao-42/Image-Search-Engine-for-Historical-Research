@@ -8,7 +8,9 @@ To better inform the members of the project progress and understand each other's
 
 **Please always update them when you make modifications to the codes.**
 
-## Collaborative Work Flow
+## Collaborative Workflow
+
+#### Basic Shared Repository Workflow
 
 - update your local repo with `git pull origin master`,
 - create a working branch with `git checkout -b MyNewBranch`
@@ -21,3 +23,7 @@ To better inform the members of the project progress and understand each other's
 - click on “Send Pull Request”
 
 Reference: https://uoftcoders.github.io/studyGroup/lessons/git/collaboration/lesson/
+
+#### Fork and Pull Workflow (Recommended)
+
+https://gist.github.com/Chaser324/ce0505fbed06b947d962
