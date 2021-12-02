@@ -23,7 +23,7 @@ from utils import *
 parser = argparse.ArgumentParser()
 
 # product quantization setting
-parser.add_argument('--sup_PQ', type=bool, default=True,
+parser.add_argument('--sup_PQ', type=bool, default=False,
                     help='whether using supervised product quantization')
 
 # parse the arguments
@@ -79,8 +79,8 @@ def main():
         hard_quantized_features = hard_quantization(Codewords, CW_idx, N_books)
         match_idx, time_per_query = matching_PQ_Net(K, Codewords, embedded_features_test[:N_query, :], N_books, CW_idx)
     else:
-        # match_idx, time_per_query = matching_L2(K, embedded_features, embedded_features_test[:N_query, :])
-        match_idx, time_per_query = matching_PQ_faiss(K, embedded_features, embedded_features_test[:N_query, :])
+        match_idx, time_per_query = matching_L2(K, embedded_features, embedded_features_test[:N_query, :])
+        # match_idx, time_per_query = matching_PQ_faiss(K, embedded_features, embedded_features_test[:N_query, :])
 
     mAP = cal_mAP(match_idx, labels, labels_test)
     print("extracting time per query: ", t_extra)

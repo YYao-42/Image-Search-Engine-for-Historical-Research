@@ -49,7 +49,7 @@ parser.add_argument('--is_gpu', type=bool, default=True,
                     help='whether training using GPU')
 
 # product quantization setting
-parser.add_argument('--sup_PQ', type=bool, default=True,
+parser.add_argument('--sup_PQ', type=bool, default=False,
                     help='whether using supervised product quantization')
 
 # parse the arguments
