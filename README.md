@@ -27,3 +27,7 @@ Reference: https://uoftcoders.github.io/studyGroup/lessons/git/collaboration/les
 #### Fork and Pull Workflow (Recommended)
 
 https://gist.github.com/Chaser324/ce0505fbed06b947d962
+
+## The summary of the previous work
+
+https://docs.google.com/document/d/1mE22UhICK-X7jXdfCJ-9LtQ6EoYRkYPD6eJ_iM178j8/edit?usp=sharing
