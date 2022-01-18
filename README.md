@@ -28,7 +28,7 @@ Reference: https://uoftcoders.github.io/studyGroup/lessons/git/collaboration/les
 
 https://gist.github.com/Chaser324/ce0505fbed06b947d962
 
-## The summary of the previous work
+#### The summary of the previous work(Bachelar project and Extra project)
 
 https://docs.google.com/document/d/1mE22UhICK-X7jXdfCJ-9LtQ6EoYRkYPD6eJ_iM178j8/edit?usp=sharing
 
