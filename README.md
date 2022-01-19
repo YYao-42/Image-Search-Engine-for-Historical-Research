@@ -34,3 +34,7 @@ https://docs.google.com/document/d/1mE22UhICK-X7jXdfCJ-9LtQ6EoYRkYPD6eJ_iM178j8/
 
 ## The summary of group progress 
 https://hackmd.io/R3bNtFL2Q0GVv9HIbn62Vw
+
+## The pipeline
+![The total pipeline](https://user-images.githubusercontent.com/76591676/150184556-870854c0-4ce7-4266-8727-835a3423df31.png)
+
