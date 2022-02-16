@@ -1,4 +1,4 @@
-# Materials about building image search engine in Python
+# Materials about building the image search engine in Python
 
 ## 1 A video tutorial from CVPR2020
 Live-coding Demo to Implement an Image Search Engine from Scratch
