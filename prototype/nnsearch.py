@@ -140,7 +140,7 @@ def cal_mAP(idx, labels_train, labels_test):
             if labels_test[i] == labels_train[idx[i, j]]:
                 count += 1
                 matched[i, j] = count
-    N_truth = np.max(matched, axis=1, keepdims=True)+1e-16
-    AP = np.sum(matched/(np.array(range(K))+1)/N_truth, axis=1)
+#     N_truth = np.max(matched, axis=1, keepdims=True)+1e-16
+    AP = np.sum(matched/(np.array(range(K))+1)/K, axis=1)
     mAP = AP.mean()
     return mAP
