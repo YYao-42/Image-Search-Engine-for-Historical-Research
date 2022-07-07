@@ -1,30 +1,22 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
-
-" diffusion module "
-
 import os
 import time
 import numpy as np
 import joblib
-from joblib import Parallel, delayed #python中的并行计算
+from joblib import Parallel, delayed
 import scipy.sparse as sparse
 import scipy.sparse.linalg as linalg
 from tqdm import tqdm
 from utils.knn import KNN, ANN
 
-
 trunc_ids = None
 trunc_init = None
 lap_alpha = None
-
 
 def get_offline_result(i):
     ids = trunc_ids[i]
     trunc_lap = lap_alpha[ids][:, ids]
     scores, _ = linalg.cg(trunc_lap, trunc_init, tol=1e-6, maxiter=20)
     return scores
-
 
 def cache(filename):
     """Decorator to cache results
@@ -37,57 +29,54 @@ def cache(filename):
             if os.path.exists(path):
                 result = joblib.load(path)
                 cost = time.time() - time0
-                print('[cache] loading {} costs {:.2f}s'.format(path, cost))
+                print('Loading cache: {} costs {:.2f}s'.format(path, cost))
                 return result
             result = func(*args, **kw)
             cost = time.time() - time0
-            print('[cache] obtaining {} costs {:.2f}s'.format(path, cost))
+            print('Obtaining cache: {} costs {:.2f}s'.format(path, cost))
             joblib.dump(result, path)
             return result
         return wrapper
     return decorator
 
-
-class Diffusion(object):  #这个是调用的核心
-    """Diffusion class
-    """
-    def __init__(self, features, cache_dir):  #self可以理解为函数，这里是在定义函数的调用变量是什么
+class Diffusion(object):
+    def __init__(self, features, cache_dir):
         self.features = features
         self.N = len(self.features)
         self.cache_dir = cache_dir
-        # use ANN for large datasets
-        self.use_ann = self.N >= 100000 #设置ann,knn
+        self.use_ann = self.N >= 110000
         if self.use_ann:
             self.ann = ANN(self.features, method='cosine')
         self.knn = KNN(self.features, method='cosine')
 
     @cache('offline.jbl')
-    def get_offline_results(self, n_trunc, kd=50):  #这里是ann/knn和diffusion结合的函数
-        """Get offline diffusion results for each gallery feature
-        """
-        print('[offline] starting offline diffusion')
-        print('[offline] 1) prepare Laplacian and initial state') #开始diffusion的第一步，ann和拉普拉斯运算
-        global trunc_ids, trunc_init, lap_alpha # global是全局关键字
+    def get_offline_results(self, n_trunc, kd=50):
+        print('Offline: Starting offline diffusion')
+        print('Offline: 1) prepare Laplacian and initial state') # !!!
+        global trunc_ids, trunc_init, lap_alpha
         if self.use_ann:
-            _, trunc_ids = self.ann.search(self.features, n_trunc)
-            #这里的ann的输入是features和number(top k)，但是这里的features是将qvecs和vecs通过vstack拼接在一起的
-            #这里涉及到能否衔接，因为原本的nn search是用了两个变量一起，这里是合并的
-            sims, ids = self.knn.search(self.features, kd) # 然后再根据kd的值进行一遍knn search,sims是similarities
-            lap_alpha = self.get_laplacian(sims, ids) #进行一次拉普拉斯运算
+            # the code version 1
+            _, trunc_ids = self.ann.search(self.features, n_trunc) #!!!
+            sims, ids = self.knn.search(self.features, kd) #!!!
+            lap_alpha = self.get_laplacian(sims, ids)
+            # the code version 2
+            # sims, ids = self.ann.search(self.features, n_trunc)
+            # trunc_ids = ids
+            # lap_alpha = self.get_laplacian(sims, ids)
         else:
             sims, ids = self.knn.search(self.features, n_trunc)
             trunc_ids = ids
             lap_alpha = self.get_laplacian(sims[:, :kd], ids[:, :kd])
-        trunc_init = np.zeros(n_trunc)  #建立一个空的idx
+        trunc_init = np.zeros(n_trunc)
         trunc_init[0] = 1
 
-        print('[offline] 2) gallery-side diffusion')  # 开始第二步，gallery diffusion，这里进行对diffusion的并行计算
+        print('Offline: 2) gallery-side diffusion')
         results = Parallel(n_jobs=-1, prefer='threads')(delayed(get_offline_result)(i)
                                       for i in tqdm(range(self.N),
-                                                    desc='[offline] diffusion'))
-        all_scores = np.concatenate(results)  #将结果串联
+                                                    desc='offline diffusion'))
+        all_scores = np.concatenate(results)
 
-        print('[offline] 3) merge offline results')  # 开始第三步，将结果融合
+        print('Offline: 3) merge offline results')
         rows = np.repeat(np.arange(self.N), n_trunc)
         offline = sparse.csr_matrix((all_scores, (rows, trunc_ids.reshape(-1))),
                                     shape=(self.N, self.N),
@@ -96,8 +85,6 @@ class Diffusion(object):  #这个是调用的核心
 
     # @cache('laplacian.jbl')
     def get_laplacian(self, sims, ids, alpha=0.99):
-        """Get Laplacian_alpha matrix
-        """
         affinity = self.get_affinity(sims, ids)
         num = affinity.shape[0]
         degrees = affinity @ np.ones(num) + 1e-12
@@ -112,22 +99,11 @@ class Diffusion(object):  #这个是调用的核心
 
     # @cache('affinity.jbl')
     def get_affinity(self, sims, ids, gamma=3):
-        """Create affinity matrix for the mutual kNN graph of the whole dataset
-        Args:
-            sims: similarities of kNN
-            ids: indexes of kNN
-        Returns:
-            affinity: affinity matrix
-        """
         num = sims.shape[0]
-        sims[sims < 0] = 0  # similarity should be non-negative
+        sims[sims < 0] = 0 
         sims = sims ** gamma
-        # vec_ids: feature vectors' ids
-        # mut_ids: mutual (reciprocal) nearest neighbors' ids
-        # mut_sims: similarites between feature vectors and their mutual nearest neighbors
         vec_ids, mut_ids, mut_sims = [], [], []
         for i in range(num):
-            # check reciprocity: i is in j's kNN and j is in i's kNN when i != j
             ismutual = np.isin(ids[ids[i]], i).any(axis=1)
             ismutual[0] = False
             if ismutual.any():

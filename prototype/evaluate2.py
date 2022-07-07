@@ -1,7 +1,7 @@
 import numpy as np
 
 
-def compute_ap(ranks, nres):
+def compute_ap2(ranks, nres):
     """
     Computes average precision for given ranked indexes.
 
@@ -33,7 +33,7 @@ def compute_ap(ranks, nres):
     return ap
 
 
-def compute_map(ranks, gnd, kappas=[]):
+def compute_map2(ranks, gnd, kappas=[]):
     """
     Computes the mAP for a given set of returned results.
 
@@ -91,7 +91,7 @@ def compute_map(ranks, gnd, kappas=[]):
                 ip += 1
 
         # compute ap
-        ap = compute_ap(pos, len(qgnd))
+        ap = compute_ap2(pos, len(qgnd))
         map = map + ap
         aps[i] = ap
 
@@ -107,10 +107,10 @@ def compute_map(ranks, gnd, kappas=[]):
     return map, aps, pr, prs
 
 
-def compute_map_and_print(dataset, ranks, gnd, kappas=[1, 5, 10]):
+def compute_map_and_print2(dataset, ranks, gnd, kappas=[1, 5, 10]):
     # old evaluation protocol
     if dataset.startswith("oxford") or dataset.startswith("paris"):
-        map, aps, _, _ = compute_map(ranks, gnd)
+        map, aps, _, _ = compute_map2(ranks, gnd)
         print(">> {}: mAP {:.2f}".format(dataset,
                                          np.around(map * 100, decimals=2)))
 
@@ -122,7 +122,7 @@ def compute_map_and_print(dataset, ranks, gnd, kappas=[1, 5, 10]):
             g["ok"] = np.concatenate([gnd[i]["easy"]])
             g["junk"] = np.concatenate([gnd[i]["junk"], gnd[i]["hard"]])
             gnd_t.append(g)
-        mapE, apsE, mprE, prsE = compute_map(ranks, gnd_t, kappas)
+        mapE, apsE, mprE, prsE = compute_map2(ranks, gnd_t, kappas)
 
         gnd_t = []
         for i in range(len(gnd)):
@@ -130,7 +130,7 @@ def compute_map_and_print(dataset, ranks, gnd, kappas=[1, 5, 10]):
             g["ok"] = np.concatenate([gnd[i]["easy"], gnd[i]["hard"]])
             g["junk"] = np.concatenate([gnd[i]["junk"]])
             gnd_t.append(g)
-        mapM, apsM, mprM, prsM = compute_map(ranks, gnd_t, kappas)
+        mapM, apsM, mprM, prsM = compute_map2(ranks, gnd_t, kappas)
 
         gnd_t = []
         for i in range(len(gnd)):
@@ -138,7 +138,7 @@ def compute_map_and_print(dataset, ranks, gnd, kappas=[1, 5, 10]):
             g["ok"] = np.concatenate([gnd[i]["hard"]])
             g["junk"] = np.concatenate([gnd[i]["junk"], gnd[i]["easy"]])
             gnd_t.append(g)
-        mapH, apsH, mprH, prsH = compute_map(ranks, gnd_t, kappas)
+        mapH, apsH, mprH, prsH = compute_map2(ranks, gnd_t, kappas)
 
         print(">> {}: mAP E: {}, M: {}, H: {}".format(
             dataset,
