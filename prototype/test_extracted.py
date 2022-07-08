@@ -94,7 +94,7 @@ for dataset in datasets:
     AQE = True
     RW = True # For datasets (small than 120,000), turn it on (True), else, turn it off (False).
 
-    # Query Expansion 1 and Diffusion
+    # Query and Gallery Enhancement
     QGE(ranks, qvecs, vecs, dataset, gnd, query_num, cache_dir, gnd_path2, RW, AQE)
 
     # Query Expansion 2 (average)
@@ -106,7 +106,7 @@ for dataset in datasets:
     # kr_reranking
     # kr_reranking(qvecs, vecs, dataset, gnd)
 
-    # SHAA
+    # SAHA
     # sift_online(query_num, qimages, sift_q_main_path, images, sift_g_main_path, ranks, dataset, gnd)
 
     # LoFTR
