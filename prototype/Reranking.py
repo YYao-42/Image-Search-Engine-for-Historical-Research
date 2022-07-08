@@ -29,7 +29,7 @@ from utils.evaluate import compute_map_and_print
 from utils.evaluate2 import compute_map_and_print2
 
 '''
-2 sift online
+2 SAHA online
 This is the online part of SAHA. We need to run SAHAoffline.py first to obtain features of all images.
 Then we can run the online part to implement SAHA re-ranking. We can also use SAHA as a single file.
 But in this way, SAHA will be much slower.
@@ -116,7 +116,7 @@ def sift_online(query_num, qimages, sift_q_main_path, images, sift_g_main_path, 
     print('Time for SIFT reranking per query:%s' % ((T_sift_2-T_sift_1)/query_num))
 
 '''
-3 loftr
+3 LoFTR
 This is LoFTR. LoFTR was an image matching method. We modified it and made it as a re-ranking method.
 LoFTR can be a little more accurate than SAHA. However, it is impossible to implement the offline/online
 design on it. Therefore it is slower than SAHA.
@@ -184,23 +184,21 @@ def loftr(loftr_weight_path, query_num, qimages, ranks, images, dataset, gnd):
 
 '''
 4 QGE
-This is the method we used in our work. QGE is a global feature-based re-ranking method. It is very fast
-and accurate.
+This is the method we used in our work. QGE is a global feature-based re-ranking method. It is very 
+fast and accurate.
 '''
 def QGE(ranks, qvecs, vecs, dataset, gnd, query_num, cache_dir, gnd_path2, RW, AQE):
-    def feature_enhancement(it_times, k, top_k_q, ranks, vecs, w):
+    def feature_enhancement(it_times, k, ranks, qvecs, vecs, w):
         for it_time in range(it_times):
-            qe_weight = (np.arange(k, 0, -1) / k).reshape(1, k, 1)
-            for i in range(top_k_q): # set top_k_q as 1
-                ranks_top = ranks[:k, int(ranks.shape[1] / top_k_q * i):
-                            int(ranks.shape[1] / top_k_q * (i + 1))]
-                top_k_vecs = vecs[:, ranks_top]
-                qvecs_top = (top_k_vecs * (qe_weight ** w)).sum(axis=1)
-                qvecs_top = qvecs_top / (np.linalg.norm(qvecs_top, ord=2, axis=0, keepdims=True) + 1e-6)
-                if i == 0:
-                    qvecs_qe = qvecs_top
-                else:
-                    qvecs_qe = np.hstack((qvecs_qe, qvecs_top))
+            qe_weight = (np.arange(k, 0, -1) / k).reshape(1, k, 1) # build an array, [1, 1/2, ..., 1/k]
+            ranks_top = ranks[:k, int(0): int(ranks.shape[1])]
+            top_k_vecs = vecs[:, ranks_top]
+            # If we have query images in databases, we can use the following line.
+            qvecs_top = (top_k_vecs * (qe_weight ** w)).sum(axis=1)
+            # If we don't have query images in databases, we can use the following line.
+            # qvecs_top = (top_k_vecs * (qe_weight ** w)).sum(axis=1) + qvecs
+            qvecs_top = qvecs_top / (np.linalg.norm(qvecs_top, ord=2, axis=0, keepdims=True) + 1e-6)
+            qvecs_qe = qvecs_top
             scores_aqe = np.dot(vecs.T, qvecs_qe)
             ranks_aqe = np.argsort(-scores_aqe, axis=0)
         return qvecs_qe, ranks_aqe
@@ -208,12 +206,11 @@ def QGE(ranks, qvecs, vecs, dataset, gnd, query_num, cache_dir, gnd_path2, RW, A
     if RW == True: 
     # For database with less than 120,000 images, we use this setting to improve accuracy.
        T_qe_1=time.time()
-       k = 10 # k refers to first k results in preliminary ranks
+       k = 10 # k refers to top k results in preliminary ranks
        w = 8. / 2
        it_times = 3
-       top_k_q = 1 # top_k refers to top results in preliminary ranks
        
-       qvecs_qe, ranks_aqe = feature_enhancement(it_times, k, top_k_q, ranks, vecs, w)
+       qvecs_qe, ranks_aqe = feature_enhancement(it_times, k, ranks, vecs, w)
        T_qe_2=time.time()
     #    print('mAP after Enhancement')
     #    compute_map_and_print2(dataset, ranks_aqe, gnd) 
@@ -273,9 +270,8 @@ def QGE(ranks, qvecs, vecs, dataset, gnd, query_num, cache_dir, gnd_path2, RW, A
        k = 3
        w = 8. / 2
        it_times = 1
-       top_k_q = 1
        
-       qvecs_qe, ranks_aqe = feature_enhancement(it_times, k, top_k_q, ranks, vecs, w)
+       qvecs_qe, ranks_aqe = feature_enhancement(it_times, k, ranks, qvecs, vecs, w)
        T_qe_2=time.time()
        print('mAP after Enhancement')
        compute_map_and_print2(dataset, ranks_aqe, gnd) 
