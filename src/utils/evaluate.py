@@ -7,7 +7,7 @@ def compute_ap(ranks, nres):
     
     Arguments
     ---------
-    ranks : zero-based ranks of positive images
+    ranks : zerro-based ranks of positive images
     nres  : number of positive images
     
     Returns
@@ -112,7 +112,7 @@ def compute_map(ranks, gnd, kappas=[]):
     return map, aps, pr, prs
 
 
-def compute_map_and_print(dataset, ranks, gnd, kappas=[1, 5, 10]):
+def compute_map_and_print(dataset, ranks, gnd, kappas=[1, 5, 10], summary=None, epoch=1):
     
     # old evaluation protocol
     if dataset.startswith('oxford5k') or dataset.startswith('paris6k'):
@@ -149,10 +149,35 @@ def compute_map_and_print(dataset, ranks, gnd, kappas=[1, 5, 10]):
         print('>> {}: mAP E: {}, M: {}, H: {}'.format(dataset, np.around(mapE*100, decimals=2), np.around(mapM*100, decimals=2), np.around(mapH*100, decimals=2)))
         print('>> {}: mP@k{} E: {}, M: {}, H: {}'.format(dataset, kappas, np.around(mprE*100, decimals=2), np.around(mprM*100, decimals=2), np.around(mprH*100, decimals=2)))
 
+        ## add text results to tensorboard if in training
+        if summary is not None:
+            summary.add_text('/' + dataset, 'Epoch {}: Dataset: {}: mAP E: {}, M: {}, H: {}'.format(epoch, dataset, np.around(mapE*100, decimals=2), np.around(mapM*100, decimals=2), np.around(mapH*100, decimals=2)), global_step=epoch) 
+            summary.add_text('/' + dataset, 'Epoch {}: Dataset: {}: mP@k{} E: {}, M: {}, H: {}'.format(epoch, dataset, kappas, np.around(mprE*100, decimals=2), np.around(mprM*100, decimals=2), np.around(mprH*100, decimals=2)), global_step=epoch)
+
+def mAP_custom(K, matching_idx, paths_q, paths_d):
+    mAP = 0
+    num_query = len(paths_q)
+    label_d = [path.split('/')[-2] for path in paths_d]
+    for i in range(num_query):
+        label_q = paths_q[i].split('/')[-2]
+        TP_idx = [index for index, value in enumerate(label_d) if value == label_q]
+        denominator = min(len(TP_idx), K)
+        count = 0
+        matched = np.zeros(K, dtype=np.int64)
+        for j in range(K):
+            if matching_idx[i, j] in TP_idx:
+                count += 1
+                matched[j] = count
+        AP = sum(matched/(np.array(range(K))+1))/denominator
+        mAP += AP
+    mAP /= num_query
+    return mAP
+
+    
 def mAP_GLM(K, matching_idx, paths_q, paths_d):
     q_ids = [path.split('/')[-1].split('.jpg')[0] for path in paths_q]
     d_ids = [path.split('/')[-1].split('.jpg')[0] for path in paths_d]
-    df = pd.read_csv('/home/qzhang7/data/test/gldv2/features/retrieval_solution_v2.1.csv', usecols= ['id','images'])
+    df = pd.read_csv('/home/yananhu/SOLAR/data/test/GLM/retrieval_solution_v2.1.csv', usecols= ['id','images'])
     df_filtered = df.loc[df['images'] != 'None']
     mAP = 0
     num_query = len(paths_q)

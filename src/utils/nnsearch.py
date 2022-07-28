@@ -45,6 +45,7 @@ def squared_distances(x, y):
     diff = x.unsqueeze(1) - y.unsqueeze(0)
     return T.sum(diff * diff, -1)
 
+
 # @jit(nopython=True, parallel=True)
 def fractional_distance(x, y, p=0.5):
     '''
@@ -273,9 +274,7 @@ class HNSW(object):
             dist = distance(q, self.data[point])
         else:
             encoded_x = self.data[point]
-            # t10 = time.time()
             dist_table = self.construct_dist_table(q, len(encoded_x))
-            # print('time:', time.time()-t10)
             dist = distance(encoded_x, dist_table)
         # look for the closest neighbor from the top to the 2nd level
         if (self.Codewords).any() == None:
@@ -489,7 +488,7 @@ class HNSW(object):
                 return
 
 
-def matching_HNSW(K, embedded_features_train, embedded_features_test, dataset, m=4, ef=8, ifgenerate=True):
+def matching_HNSW(K, embedded_features_train, embedded_features_test, dataset, ifgenerate=True):
     num_train, feature_len = embedded_features_train.shape
     num_test, _ = embedded_features_test.shape
     if not os.path.exists('outputs/' + dataset):
@@ -498,7 +497,7 @@ def matching_HNSW(K, embedded_features_train, embedded_features_test, dataset, m
     file_path = 'outputs/' + dataset + '/' + 'HNSW.pkl'
 
     if ifgenerate:
-        hnsw = HNSW('l2', m=m, ef=ef)
+        hnsw = HNSW('l2', m=4, ef=8)
         widgets = ['Progress: ', Percentage(), ' ', Bar('#'), ' ', Timer(), ' ', ETA()]
         pbar = ProgressBar(widgets=widgets, maxval=num_train).start()
         # Building HNSW graph
@@ -520,9 +519,7 @@ def matching_HNSW(K, embedded_features_train, embedded_features_test, dataset, m
     t1 = time.time()
     for row in range(num_test):
         query = embedded_features_test[row, :]
-        # t10 = time.time()
         idx_res = np.array(hnsw.search(query, K, ef=K))[:, 0].astype('int')
-        # print('No:', row, 'time:', time.time()-t10)
         if len(idx_res) < K:
             idx_miss = np.where(np.in1d(range(num_train), idx_res) == False)[0]
             idx_res = np.concatenate((idx_res, idx_miss))
@@ -576,7 +573,7 @@ def matching_HNSW_PQ(K, Codewords, embedded_features_test, CW_idx):
     return idx, time_per_query
 
 
-def matching_HNSW_NanoPQ(K, embedded_features, embedded_features_test, dataset, N_books=16, N_words=256, m=4, ef=8, ifgenerate=True):
+def matching_HNSW_NanoPQ(K, embedded_features, embedded_features_test, N_books, N_words, dataset, ifgenerate=True):
     # normalization
     eftrain_norm = np.linalg.norm(embedded_features, axis=1)
     eftrain_norm = np.expand_dims(eftrain_norm, axis=1)
@@ -585,17 +582,15 @@ def matching_HNSW_NanoPQ(K, embedded_features, embedded_features_test, dataset, 
     embedded_features = embedded_features / eftrain_norm
     embedded_features_test = embedded_features_test / eftest_norm
 
-    save_path = '/home/yuanyuanyao/outputs/' + dataset
-    if not os.path.exists(save_path):
-        os.makedirs(save_path)
-    # if not os.path.exists('outputs/' + dataset):
-    #         os.makedirs('outputs/' + dataset)
+    if not os.path.exists('outputs/' + dataset):
+            os.makedirs('outputs/' + dataset)
 
-    PQfile_path = save_path + '/' + 'NanoPQ.pkl'
+    PQfile_path = 'outputs/' + dataset + '/' + 'NanoPQ.pkl'
     if ifgenerate:
         pq = nanopq.PQ(M=N_books, Ks=N_words, verbose=True)
         pq.fit(vecs=embedded_features, iter=20, seed=42)
         # Save PQ object
+        aPQfile = open(PQfile_path, "wb")
         with open(PQfile_path, 'wb') as aPQfile:
             pickle.dump(pq, aPQfile)
     else:
@@ -609,26 +604,17 @@ def matching_HNSW_NanoPQ(K, embedded_features, embedded_features_test, dataset, 
     Codewords = np.transpose(Codewords, (1, 0, 2))
     Codewords = np.reshape(Codewords, (N_words, -1))
 
-    num_test, _ = embedded_features_test.shape
     CW_idx_unique, reverse_idx = np.unique(CW_idx, return_inverse=True, axis=0)
     num_train, _ = CW_idx_unique.shape
+    key_list = range(num_train)
+    value_list = [np.where(reverse_idx == t)[0] for t in key_list]
+    dict_recover = dict(zip(key_list, value_list))
+    num_test, _ = embedded_features_test.shape
 
-    dicfile_path = save_path + '/' + 'dict_recover.pkl'
-
-    if ifgenerate:
-        key_list = range(num_train)
-        value_list = [np.where(reverse_idx == t)[0] for t in key_list]
-        dict_recover = dict(zip(key_list, value_list))
-        with open(dicfile_path, 'wb') as adicfile:
-            pickle.dump(dict_recover, adicfile)  
-    else: 
-        with open(dicfile_path, 'rb') as pickle_file:
-            dict_recover = pickle.load(pickle_file)
-
-    file_path = save_path + '/' + 'HNSW_NanoPQ.pkl'
+    file_path = 'outputs/' + dataset + '/' + 'HNSW_NanoPQ.pkl'
 
     if ifgenerate:
-        hnsw = HNSW('l2', m=m, ef=ef, Codewords=Codewords, N_books=N_books)
+        hnsw = HNSW('l2', m=4, ef=8, Codewords=Codewords, N_books=N_books)
         widgets = ['Progress: ', Percentage(), ' ', Bar('#'), ' ', Timer(), ' ', ETA()]
         pbar = ProgressBar(widgets=widgets, maxval=num_train).start()
         # Building HNSW graph
@@ -638,6 +624,7 @@ def matching_HNSW_NanoPQ(K, embedded_features, embedded_features_test, dataset, 
             pbar.update(i + 1)
         pbar.finish()
         # Save HNSW object
+        afile = open(file_path, "wb")
         with open(file_path, 'wb') as afile:
             pickle.dump(hnsw, afile)   
     else:
@@ -651,9 +638,7 @@ def matching_HNSW_NanoPQ(K, embedded_features, embedded_features_test, dataset, 
         query = embedded_features_test[row, :]
         # K_unique = num_train
         K_unique = min(K, num_train)
-        # t10 = time.time()
         idx_unique = np.array(hnsw.search(query, K_unique, ef=K_unique))[:, 0].astype('int')
-        # print('No:', row, 'time:', time.time()-t10)
         if len(idx_unique) < K_unique:
             idx_miss = np.where(np.in1d(range(K_unique), idx_unique) == False)[0]
             idx_unique = np.concatenate((idx_unique, idx_miss))
@@ -824,7 +809,7 @@ def Nano_PQ(embedded_features, N_books, N_words):
 
     return embedded_code, Codewords, embedded_recon
 
-def matching_Nano_PQ(K, embedded_features_train, embedded_features_test, dataset, N_books=16, n_bits_perbook=8, ifgenerate=True):
+def matching_Nano_PQ(K, embedded_features_train, embedded_features_test, N_books, n_bits_perbook, dataset, ifgenerate=True):
     # https://nanopq.readthedocs.io/en/latest/source/tutorial.html#basic-of-pq
     N_words = 2**n_bits_perbook
     num_train, feature_len = embedded_features_train.shape
@@ -978,25 +963,23 @@ def matching_Greedyhash(K, hash_codes_train, hash_codes_test):
     return idx, time_per_query
 
 
-def matching_ANNOY(K, embedded_features_train, embedded_features_test, metric, dataset, n_trees=5, ifgenerate=True):
+def matching_ANNOY(K, embedded_features_train, embedded_features_test, metric, dataset, ifgenerate=True):
     num_train, feature_len = embedded_features_train.shape
     num_test, _ = embedded_features_test.shape
     
-    # if not os.path.exists('outputs/' + dataset):
-    #         os.makedirs('outputs/' + dataset)
-    save_path = '/home/qzhang7/outputs/' + dataset
-    if not os.path.exists(save_path):
-        os.makedirs(save_path)
+    if not os.path.exists('outputs/' + dataset):
+            os.makedirs('outputs/' + dataset)
 
     if ifgenerate:
         t = annoy.AnnoyIndex(feature_len, metric)
+        n_trees = 5
         for n, x in enumerate(embedded_features_train):
             t.add_item(n, x)
         t.build(n_trees)
-        t.save(save_path + '/' + 'test.ann')
+        t.save('outputs/' + dataset + '/' + 'test.ann')
     else:
         t = annoy.AnnoyIndex(feature_len, metric)
-        t.load(save_path + '/' + 'test.ann')
+        t.load('outputs/' + dataset + '/' + 'test.ann')
     idx = np.zeros((num_test, K), dtype=np.int64)
     t1 = time.time()
     for i in range(num_test):

@@ -1,6 +1,9 @@
 import os
 import hashlib
 import pickle
+import fnmatch
+from torch.utils.tensorboard import SummaryWriter
+
 
 def get_root():
     return os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.realpath(__file__)))))
@@ -34,6 +37,25 @@ def sha256_hash(filename, block_size=65536, length=8):
             sha256.update(block)
     return sha256.hexdigest()[:length-1]
 
+def tb_setup(save_dir):
+    # Setup for tensorboard
+    tb_save_dir = os.path.join(
+                    save_dir,
+                    'summary',
+                    )
+    if not os.path.exists(tb_save_dir):
+        os.makedirs(tb_save_dir)
+    
+    trash_list = os.listdir(tb_save_dir)
+    for entry in trash_list:
+        filename = os.path.join(tb_save_dir, entry)
+        if fnmatch.fnmatch(entry, '*tfevents*'):
+            os.remove(filename)
+
+    summary = SummaryWriter(log_dir=tb_save_dir)
+
+    return summary
+
 def path_all_jpg(directory, start):
     paths = []
     for dirpath, _, filenames in os.walk(directory):
@@ -54,7 +76,7 @@ def save_path_feature(dataset, vecs, img_r_path):
 
     if '/' in dataset:
         dataset = dataset.replace('/', '_')
-    file_path_feature = 'outputs/' + dataset + '_path_feature.pkl'
+    file_path_feature = 'outputs/features/' + dataset  +'_path_feature_multi2.pkl'
     afile = open(file_path_feature, "wb")
     pickle.dump(path_feature, afile)
     afile.close()
@@ -62,7 +84,7 @@ def save_path_feature(dataset, vecs, img_r_path):
 def load_path_features(dataset):
     if '/' in dataset:
         dataset = dataset.replace('/', '_')
-    file_path_feature = '/home/qzhang7/data/test/gldv2/features/' + dataset + '_path_feature.pkl'
+    file_path_feature = 'outputs/features/' + dataset + '_path_feature_single.pkl'
     with open(file_path_feature, 'rb') as pickle_file:
         path_feature = pickle.load(pickle_file)
     vecs = path_feature['feature']
