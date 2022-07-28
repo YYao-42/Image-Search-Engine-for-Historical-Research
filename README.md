@@ -61,7 +61,7 @@ You can view the automatically generated example ranking images in ~outputs/rank
 ### Testing re-ranking methods
 You can use three re-ranking methods (QGE, SAHA, and LoFTR) in any datasets in the following python files:
 ```ruby
-   python3 -m ~src.test_extract # This is an example of our pipeline. You can test any datasets with this file.
+   python3 -m ~src.test_extracted # This is an example of our pipeline. You can test any datasets with this file.
    python3 -m ~src.server   # This is our pipeline with GUI.
 ```
 These two python files can help you to use re-ranking.  
@@ -88,7 +88,7 @@ loftr(loftr_weight_path, query_num, qimages, ranks, images, dataset, gnd)
 If you want to use LoFTR, you need to download the pretrained LoFTR weight from: https://github.com/zju3dv/LoFTR  
 You can put the LoFTR weight under this path: src/utils/weights/  
    
-You can find detailed annotations about how to use these re-ranking methods in test_extract.py and server.py.  
+You can find detailed annotations about how to use these re-ranking methods in Reranking.py, test_extracted.py and server.py.  
 
 </p>
 </details>
