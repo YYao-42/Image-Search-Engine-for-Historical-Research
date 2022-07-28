@@ -1,4 +1,4 @@
-## The pipeline
+## Our pipeline
 ![pipeline](https://user-images.githubusercontent.com/76591676/181504716-76a20f35-3485-4489-8f81-1104651e2c05.png)
 
 ## Usage
