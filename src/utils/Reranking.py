@@ -277,6 +277,27 @@ def QGE(ranks, qvecs, vecs, dataset, gnd, query_num, cache_dir, gnd_path2, RW, A
        compute_map_and_print2(dataset, ranks_aqe, gnd) 
        print('Time for Enhancement:', ((T_qe_2-T_qe_1)/query_num)) 
        print('----------------------------------------')
+        
+def qge1(ranks, qvec, vecs, K):
+    def feature_enhancement(it_times, k, ranks, qvecs, vecs, w):
+        for it_time in range(it_times):
+            qe_weight = (np.arange(k, 0, -1) / k).reshape(1, k, 1) # build an array, [1, 1/2, ..., 1/k]
+            ranks_top = ranks[:k, int(0): int(ranks.shape[1])]
+            top_k_vecs = vecs[:, ranks_top]
+            # If we have query images in databases, we can use the following line.
+            qvecs_top = (top_k_vecs * (qe_weight ** w)).sum(axis=1)
+            # If we don't have query images in databases, we can use the following line.
+            # qvecs_top = (top_k_vecs * (qe_weight ** w)).sum(axis=1) + qvecs
+            qvecs_top = qvecs_top / (np.linalg.norm(qvecs_top, ord=2, axis=0, keepdims=True) + 1e-6)
+            qvecs_qe = qvecs_top
+            scores_aqe = np.dot(vecs.T, qvecs_qe)
+            ranks_aqe = np.argsort(-scores_aqe, axis=0)
+        return qvecs_qe, ranks_aqe
+    k = 3 
+    w = 8. / 2
+    it_times = 1 
+    qvecs_qe, ranks_aqe = feature_enhancement(it_times, k, ranks, vecs, w)
+    return ranks_aqe
 
 '''
 5 Average Query Expansion
