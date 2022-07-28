@@ -39,7 +39,7 @@ https://hackmd.io/R3bNtFL2Q0GVv9HIbn62Vw
 ![pipeline](https://user-images.githubusercontent.com/76591676/181504716-76a20f35-3485-4489-8f81-1104651e2c05.png)
 
 ## Usage
-###<details><summary>Training</summary>
+###<details><summary>**Trainin**g</summary>
 
 <p>
 
@@ -63,8 +63,9 @@ To train the model, you should firstly make sure you have downloaded the trainin
                 EXPORT_DIR
 ```
 </p>
+</details>
 
-###<details><summary>Test</summary>
+###<details><summary>**Test**</summary>
 
 <p>
 Firstly， please make sure you have downloaded the test datasets and put them under ~/data/test/.
@@ -94,9 +95,10 @@ You can view the automatically generated example ranking images in ~outputs/rank
 You can view the automatically generated example ranking images in ~outputs/ranks/. Also, the extracted feature files are automatically saved in ~outputs/features/.
 
 </p>
-
-###<details><summary>Retrieval Engine</summary>
+</details>
+<details><summary>**Retrieval Engine**</summary>
 <p>
 
 
 </p>
+</details>
