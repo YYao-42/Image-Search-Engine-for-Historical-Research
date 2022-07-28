@@ -43,11 +43,11 @@ https://hackmd.io/R3bNtFL2Q0GVv9HIbn62Vw
 
 <p>
 
-We have already trained the model "Resnet101-solar-best" with good results, which is stored at https://drive.google.com/drive/folders/1JbGNvQgqKm7GiUvOqw1DSncSVR3k0xbm?usp=sharing. We recommend that you use ths pre-trained model. If you want to use our pre-trined model, download it and place it in '~/data/networks/' , then skip the following instructions directly to next part.
+We have already trained the model "Resnet101-solar-best" with good results, which is stored at https://drive.google.com/drive/folders/1JbGNvQgqKm7GiUvOqw1DSncSVR3k0xbm?usp=sharing. We recommend that you use ths pre-trained model. If you want to use our pre-trined model, download it and place it in ~/data/networks/ , then skip the following instructions directly to next part.
 
-If you wish to retrain the model yourself, the Example training script is located in '~/src/main_train.py'
+If you wish to retrain the model yourself, the Example training script is located in ~/src/main_train.py
 
-To train the model, you should firstly make sure you have downloaded the training datasets Sfm120k or GoogleLandmarksv2 in  '~/data/train/', then you can start the training with the settings described in the paper by running
+To train the model, you should firstly make sure you have downloaded the training datasets Sfm120k or GoogleLandmarksv2 in  ~/data/train/, then you can start the training with the settings described in the paper by running
 
 ```ruby
    python3 -m main_train [-h] [--training-dataset DATASET] [--no-val]
@@ -68,7 +68,7 @@ To train the model, you should firstly make sure you have downloaded the trainin
 <details><summary><b>Test</b></summary>
 
 <p>
-Firstly， please make sure you have downloaded the test datasets and put them under '~/data/test/'.
+Firstly， please make sure you have downloaded the test datasets and put them under ~/data/test/.
 Then you can start retrieval tests as following:
    
 ### Testing on R-Oxford, R-Paris
@@ -76,24 +76,38 @@ Then you can start retrieval tests as following:
 ```ruby
    python3 -m ~src.main_retrieve
 ```
-You can view the automatically generated example ranking images in '~/outputs/ranks/'. Also, the extracted feature files are automatically saved in '~/outputs/features/'.
+You can view the automatically generated example ranking images in ~outputs/ranks/. Also, the extracted feature files are automatically saved in ~outputs/features/.
 ### Testing with the extra 1-million distractors
 ```ruby
    python3 -m ~src.extract_1m
    python3 -m ~src.test_1m
 ```
-You can view the automatically generated example ranking images in '~/outputs/ranks/'. Also, the extracted feature files are automatically saved in '~/outputs/features/'.### Testing on Custom
+You can view the automatically generated example ranking images in ~outputs/ranks/. Also, the extracted feature files are automatically saved in ~outputs/features/.
+### Testing on Custom
 ```ruby
    python3 -m ~src.test_custom
 ```
-You can view the automatically generated example ranking images in '~/outputs/ranks/'. Also, the extracted feature files are automatically saved in '~/outputs/features/'.
+You can view the automatically generated example ranking images in ~outputs/ranks/. Also, the extracted feature files are automatically saved in ~outputs/features/.
+
 ### Testing on GoogleLandmarks v2 test
 ```ruby
    python3 -m ~src.test_GLM
 ```
-You can view the automatically generated example ranking images in '~/outputs/ranks/'. Also, the extracted feature files are automatically saved in '~/outputs/features/'.
+You can view the automatically generated example ranking images in ~outputs/ranks/. Also, the extracted feature files are automatically saved in ~outputs/features/.
+
 ### Testing re-ranking methods
-You can use three re-ranking methods (SAHA, LoFTR and QGE) in any datasets. You can use the api "QGE(ranks, qvecs, vecs, dataset, gnd, query_num, cache_dir, gnd_path2, RW, AQE)" for calling QGE, use the api "sift_online(query_num, qimages, sift_q_main_path, images, sift_g_main_path, ranks, dataset, gnd)" for calling SAHA online, and use the api "loftr(loftr_weight_path, query_num, qimages, ranks, images, dataset, gnd)" for calling LoFTR. 
+You can use three re-ranking methods (SAHA, LoFTR and QGE) in any datasets in the following python files:
+```ruby
+   python3 -m ~src.test_extract
+   python3 -m ~src.server
+```
+In these files, you can test extracted features from any dataset.
+   
+To test re-ranking methods, you can use the following api:
+   
+For QGE: QGE(ranks, qvecs, vecs, dataset, gnd, query_num, cache_dir, gnd_path2, RW, AQE)
+For SAHA: sift_online(query_num, qimages, sift_q_main_path, images, sift_g_main_path, ranks, dataset, gnd)
+For LoFTR: loftr(loftr_weight_path, query_num, qimages, ranks, images, dataset, gnd) 
 
 </p>
 </details>
