@@ -270,12 +270,7 @@ def index():
         # TODO: id -> dist[id]
         scores1 = [(id, img_paths[id]) for id in np.squeeze(match_idx)[:10]]
         scores2 = [(id, img_paths[id]) for id in np.squeeze(idx2)[:10]]
-        # print(scores1)
-        # print(scores1.shape) #应该看看scores是什么样子的
-        # 但是在这里print的话会报错，网页无法显示
-        return render_template('index.html',  
-        #建立交互网页网址是之前的某个步骤建立的，这个是建立交互网站的内容的，直接调用index.html文件
-        #这里只是将结果输入到模板中，网页如何显示是根据模板定的
+        return render_template('index.html', 
                                query_path=query_path,
                                scores=scores1,
                                marks=scores2)
