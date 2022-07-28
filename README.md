@@ -39,7 +39,7 @@ https://hackmd.io/R3bNtFL2Q0GVv9HIbn62Vw
 ![pipeline](https://user-images.githubusercontent.com/76591676/181504716-76a20f35-3485-4489-8f81-1104651e2c05.png)
 
 ## Usage
-<details><summary>**Training**</summary>
+<details><summary>Training</b></summary>
 
 <p>
 
@@ -65,7 +65,7 @@ To train the model, you should firstly make sure you have downloaded the trainin
 </p>
 </details>
 
-<details><summary>**Test**</summary>
+<details><summary>Test</b></summary>
 
 <p>
 Firstly， please make sure you have downloaded the test datasets and put them under ~/data/test/.
@@ -96,7 +96,7 @@ You can view the automatically generated example ranking images in ~outputs/rank
 
 </p>
 </details>
-<details><summary>**Retrieval Engine**</summary>
+<details><summary>Retrieval Engine</b></summary>
 <p>
 
 
