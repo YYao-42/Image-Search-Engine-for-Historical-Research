@@ -65,7 +65,7 @@ You can use three re-ranking methods (QGE, SAHA, and LoFTR) in any datasets in t
    python3 -m ~src.server   # This is our pipeline with GUI.
 ```
 These two python files can help you to use re-ranking.  
-By these files, you can test extracted features from any dataset. You can put preextracted features under this path: src/outputs. And please unzip the file in "src/utils" before using.
+By these files, you can test extracted features from any dataset. You can put preextracted features under this path: src/outputs/. And please unzip the file in "src/utils/" before using.
 The pretrained feature extraction weight: https://drive.google.com/file/d/1fylhFYW0vYIBpYts_bx4IMiIPL34V5Yb/view?usp=sharing  
 You can put rhe weight under this path: src/EXPORT_DIR_QZ/resnet101-gem-w-tri/
    
@@ -84,7 +84,7 @@ For LoFTR:
 loftr(loftr_weight_path, query_num, qimages, ranks, images, dataset, gnd)  
 ```
 If you want to use LoFTR, you need to download the pretrained LoFTR weight from: https://github.com/zju3dv/LoFTR  
-You can put the LoFTR weight under this path: src/utils/weights
+You can put the LoFTR weight under this path: src/utils/weights/
 
 </p>
 </details>
