@@ -70,6 +70,7 @@ To train the model, you should firstly make sure you have downloaded the trainin
 <p>
 Firstly， please make sure you have downloaded the test datasets and put them under ~/data/test/.
 Then you can start retrieval tests as following:
+   
 ### Testing on R-Oxford, R-Paris
 
 ```ruby
