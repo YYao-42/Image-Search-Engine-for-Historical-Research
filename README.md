@@ -39,11 +39,11 @@ https://hackmd.io/R3bNtFL2Q0GVv9HIbn62Vw
 ![pipeline](https://user-images.githubusercontent.com/76591676/181504716-76a20f35-3485-4489-8f81-1104651e2c05.png)
 
 ## Usage
-<details><summary>Training</b></summary>
+<details><summary><b>Training</b></summary>
 
 <p>
 
-We have already trained the model "Resnet101-solar-best" with good results, which is stored at https://drive.google.com/drive/folders/ 1JbGNvQgqKm7GiUvOqw1DSncSVR3k0xbm?usp=sharing. We recommend that you use ths pre-trained model. If you want to use our pre-trined model, download it and place it in ~/data/networks/ , then skip the following instructions directly to next part.
+We have already trained the model "Resnet101-solar-best" with good results, which is stored at https://drive.google.com/drive/folders/1JbGNvQgqKm7GiUvOqw1DSncSVR3k0xbm?usp=sharing. We recommend that you use ths pre-trained model. If you want to use our pre-trined model, download it and place it in ~/data/networks/ , then skip the following instructions directly to next part.
 
 If you wish to retrain the model yourself, the Example training script is located in ~/src/main_train.py
 
@@ -65,7 +65,7 @@ To train the model, you should firstly make sure you have downloaded the trainin
 </p>
 </details>
 
-<details><summary>Test</b></summary>
+<details><summary><b>Test</b></summary>
 
 <p>
 Firstly， please make sure you have downloaded the test datasets and put them under ~/data/test/.
@@ -96,7 +96,7 @@ You can view the automatically generated example ranking images in ~outputs/rank
 
 </p>
 </details>
-<details><summary>Retrieval Engine</b></summary>
+<details><summary><b>Retrieval Engine</b></summary>
 <p>
 
 
