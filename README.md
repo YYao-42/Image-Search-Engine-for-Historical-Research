@@ -36,6 +36,6 @@ https://docs.google.com/document/d/1mE22UhICK-X7jXdfCJ-9LtQ6EoYRkYPD6eJ_iM178j8/
 https://hackmd.io/R3bNtFL2Q0GVv9HIbn62Vw
 
 ## The pipeline
-![The total pipeline]![pipeline](https://user-images.githubusercontent.com/76591676/181504716-76a20f35-3485-4489-8f81-1104651e2c05.png)
+![pipeline](https://user-images.githubusercontent.com/76591676/181504716-76a20f35-3485-4489-8f81-1104651e2c05.png)
 
 
