@@ -1,0 +1,33 @@
+<!doctype html>
+<html>
+    <head><link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"></head>
+    <body>
+        <div class="container">
+            <h2>Image Search Engine: Demo</h2>
+            <form method="POST" enctype="multipart/form-data">
+                    <input type="file" name="query_img"><br>
+                    <input type="submit">
+            </form>
+            <h3>Query:</h3>
+            {% if query_path %}
+            <img src="{{ query_path }}" width="160px">
+            {% endif %}
+            <h3>Preliminary results:</h3>
+            {% for score in scores %} 
+            <figure style="float: left; margin-right: 5px; margin-bottom: 5px;">
+                <img src="{{ score[1] }}" height="155px">
+                <!-- <figcaption>{{ score[0] }}</figcaption> -->
+            </figure>
+            {% endfor %}
+        </div>
+        <div class="container">
+            <h3>Results of re-ranking:</h3>
+            {% for mark in marks %} 
+            <figure style="float: left; margin-right: 5px; margin-bottom: 5px;">
+                <img src="{{ mark[1] }}" height="155px">
+                <!-- <figcaption>{{ mark[0] }}</figcaption> -->
+            </figure>
+            {% endfor %}
+        </div>
+    </body>
+</html>
