@@ -65,7 +65,7 @@ You can use three re-ranking methods (QGE, SAHA, and LoFTR) in any datasets in t
    python3 -m ~src.server
 ```
 In these files, you can test extracted features from any dataset. These two python files can help you to use re-ranking. And please unzip the file in "src/utils" before using.
-The pretrained feature extraction weight:https://drive.google.com/file/d/1fylhFYW0vYIBpYts_bx4IMiIPL34V5Yb/view?usp=sharing
+The pretrained feature extraction weight: https://drive.google.com/file/d/1fylhFYW0vYIBpYts_bx4IMiIPL34V5Yb/view?usp=sharing
    
 To test re-ranking methods, you can use the following api in the aforementioned two files:
    
