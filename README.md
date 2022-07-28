@@ -96,7 +96,7 @@ You can view the automatically generated example ranking images in ~outputs/rank
 You can view the automatically generated example ranking images in ~outputs/ranks/. Also, the extracted feature files are automatically saved in ~outputs/features/.
 
 ### Testing re-ranking methods
-You can use three re-ranking methods (SAHA, LoFTR and QGE) in any datasets in the following python files:
+You can use three re-ranking methods (QGE, SAHA, and LoFTR) in any datasets in the following python files:
 ```ruby
    python3 -m ~src.test_extract
    python3 -m ~src.server
