@@ -107,15 +107,15 @@ The pretrained feature extraction weight:https://drive.google.com/file/d/1fylhFY
 To test re-ranking methods, you can use the following api:
    
 For QGE:
-'''
+'''ruby
 QGE(ranks, qvecs, vecs, dataset, gnd, query_num, cache_dir, gnd_path2, RW, AQE)  
 '''
 For SAHA: 
-'''
+'''ruby
 sift_online(query_num, qimages, sift_q_main_path, images, sift_g_main_path, ranks, dataset, gnd)  
 '''
 For LoFTR: 
-'''
+'''ruby
 loftr(loftr_weight_path, query_num, qimages, ranks, images, dataset, gnd)  
 '''
 If you want to use LoFTR, you need to download the pretrained LoFTR weight from: https://github.com/zju3dv/LoFTR
