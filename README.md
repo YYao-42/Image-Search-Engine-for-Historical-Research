@@ -95,6 +95,9 @@ You can view the automatically generated example ranking images in ~outputs/rank
 ```
 You can view the automatically generated example ranking images in ~outputs/ranks/. Also, the extracted feature files are automatically saved in ~outputs/features/.
 
+### Testing re-ranking methods
+You can use three re-ranking methods (SAHA, LoFTR and QGE) in any datasets. You can use the api "QGE(ranks, qvecs, vecs, dataset, gnd, query_num, cache_dir, gnd_path2, RW, AQE)" for calling QGE, use the api "sift_online(query_num, qimages, sift_q_main_path, images, sift_g_main_path, ranks, dataset, gnd)" for calling SAHA online, and use the api "loftr(loftr_weight_path, query_num, qimages, ranks, images, dataset, gnd)" for calling LoFTR. 
+
 </p>
 </details>
 <details><summary><b>Retrieval Engine</b></summary>
