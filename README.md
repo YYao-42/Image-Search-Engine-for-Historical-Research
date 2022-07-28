@@ -39,7 +39,7 @@ https://hackmd.io/R3bNtFL2Q0GVv9HIbn62Vw
 ![pipeline](https://user-images.githubusercontent.com/76591676/181504716-76a20f35-3485-4489-8f81-1104651e2c05.png)
 
 ## Usage
-###<details><summary>**Trainin**g</summary>
+<details><summary>**Training**</summary>
 
 <p>
 
@@ -65,30 +65,30 @@ To train the model, you should firstly make sure you have downloaded the trainin
 </p>
 </details>
 
-###<details><summary>**Test**</summary>
+<details><summary>**Test**</summary>
 
 <p>
 Firstly， please make sure you have downloaded the test datasets and put them under ~/data/test/.
 Then you can start retrieval tests as following:
-####Testing on R-Oxford, R-Paris
+### Testing on R-Oxford, R-Paris
 
 ```ruby
    python3 -m ~src.main_retrieve
 ```
 You can view the automatically generated example ranking images in ~outputs/ranks/. Also, the extracted feature files are automatically saved in ~outputs/features/.
-####Testing with the extra 1-million distractors
+### Testing with the extra 1-million distractors
 ```ruby
    python3 -m ~src.extract_1m
    python3 -m ~src.test_1m
 ```
 You can view the automatically generated example ranking images in ~outputs/ranks/. Also, the extracted feature files are automatically saved in ~outputs/features/.
-####Testing on Custom
+### Testing on Custom
 ```ruby
    python3 -m ~src.test_custom
 ```
 You can view the automatically generated example ranking images in ~outputs/ranks/. Also, the extracted feature files are automatically saved in ~outputs/features/.
 
-####Testing on GoogleLandmarks v2 test
+### Testing on GoogleLandmarks v2 test
 ```ruby
    python3 -m ~src.test_GLM
 ```
