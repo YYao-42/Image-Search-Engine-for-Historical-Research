@@ -92,7 +92,7 @@ for dataset in datasets:
     loftr_weight_path = "/users/qzhang7/src_qz/4_src-base/utils/weights/outdoor_ds.ckpt"
     K = 100
     AQE = True
-    RW = False # For datasets (small than 120,000), turn it on (True), else, turn it off (False).
+    RW = False # For datasets (smaller than 120,000), turn it on (True), else, turn it off (False).
 
     # Query and Gallery Enhancement
     QGE(ranks, qvecs, vecs, dataset, gnd, query_num, cache_dir, gnd_path2, RW, AQE)
