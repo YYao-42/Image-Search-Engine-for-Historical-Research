@@ -105,9 +105,9 @@ In these files, you can test extracted features from any dataset.
    
 To test re-ranking methods, you can use the following api:
    
-For QGE: QGE(ranks, qvecs, vecs, dataset, gnd, query_num, cache_dir, gnd_path2, RW, AQE)
-For SAHA: sift_online(query_num, qimages, sift_q_main_path, images, sift_g_main_path, ranks, dataset, gnd)
-For LoFTR: loftr(loftr_weight_path, query_num, qimages, ranks, images, dataset, gnd) 
+For QGE: QGE(ranks, qvecs, vecs, dataset, gnd, query_num, cache_dir, gnd_path2, RW, AQE)  
+For SAHA: sift_online(query_num, qimages, sift_q_main_path, images, sift_g_main_path, ranks, dataset, gnd)  
+For LoFTR: loftr(loftr_weight_path, query_num, qimages, ranks, images, dataset, gnd)   
 
 </p>
 </details>
