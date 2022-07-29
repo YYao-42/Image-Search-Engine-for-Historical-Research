@@ -302,6 +302,8 @@ def qge1(ranks, qvec, vecs, K):
 '''
 5 Average Query Expansion
 This is the original query expansion. This is accurate. But it is slower than QGE.
+
+url: https://github.com/fuxinjiang/huawei2020/blob/6eaffa9f18732a27a29204834b22b57d9817f08e/utils/db_qe.py
 '''
 def average_query_expansion(qvecs,vecs,K,dataset,gnd):
     def _centerize(v1, v2):
@@ -361,6 +363,8 @@ def average_query_expansion(qvecs,vecs,K,dataset,gnd):
 
 This another global feature-based re-ranking method, database augmentation. This method is accurate.
 But it is slower than QGE. Maybe there is a way to improve it.
+
+url: https://github.com/fuxinjiang/huawei2020/blob/6eaffa9f18732a27a29204834b22b57d9817f08e/utils/db_qe.py
 '''
 def database_augmentation(qvecs,vecs,K,dataset,gnd):
     def _centerize(v1, v2):
@@ -429,6 +433,10 @@ benchmarks
 7 kr re-ranking
 This method is a global feature-based reranking method. It is popular. Some pipelines implement it 
 as re-ranking. Compared to QGE, it is a little slower. Its accuracy is good.
+
+CVPR2017 paper:Zhong Z, Zheng L, Cao D, et al. Re-ranking Person Re-identification with k-reciprocal Encoding[J]. 2017.
+url:http://openaccess.thecvf.com/content_cvpr_2017/papers/Zhong_Re-Ranking_Person_Re-Identification_CVPR_2017_paper.pdf
+Matlab version: https://github.com/zhunzhong07/person-re-ranking
 '''
 def kr_reranking(qvecs, vecs, 
                 #  dataset, gnd  #If you want to test the custom dataset, you need to commnet out 
