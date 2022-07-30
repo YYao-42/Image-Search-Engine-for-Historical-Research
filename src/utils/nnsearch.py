@@ -488,7 +488,7 @@ class HNSW(object):
                 return
 
 
-def matching_HNSW(K, embedded_features_train, embedded_features_test, dataset, ifgenerate=True):
+def matching_HNSW(K, embedded_features_train, embedded_features_test, dataset, m=4, ef=8, ifgenerate=True):
     num_train, feature_len = embedded_features_train.shape
     num_test, _ = embedded_features_test.shape
     if not os.path.exists('outputs/' + dataset):
@@ -497,7 +497,7 @@ def matching_HNSW(K, embedded_features_train, embedded_features_test, dataset, i
     file_path = 'outputs/' + dataset + '/' + 'HNSW.pkl'
 
     if ifgenerate:
-        hnsw = HNSW('l2', m=4, ef=8)
+        hnsw = HNSW('l2', m=m, ef=ef)
         widgets = ['Progress: ', Percentage(), ' ', Bar('#'), ' ', Timer(), ' ', ETA()]
         pbar = ProgressBar(widgets=widgets, maxval=num_train).start()
         # Building HNSW graph
@@ -573,7 +573,7 @@ def matching_HNSW_PQ(K, Codewords, embedded_features_test, CW_idx):
     return idx, time_per_query
 
 
-def matching_HNSW_NanoPQ(K, embedded_features, embedded_features_test, N_books, N_words, dataset, ifgenerate=True):
+def matching_HNSW_NanoPQ(K, embedded_features, embedded_features_test, dataset, N_books=16, N_words=256, m=4, ef=8, ifgenerate=True):
     # normalization
     eftrain_norm = np.linalg.norm(embedded_features, axis=1)
     eftrain_norm = np.expand_dims(eftrain_norm, axis=1)
@@ -590,7 +590,7 @@ def matching_HNSW_NanoPQ(K, embedded_features, embedded_features_test, N_books, 
         pq = nanopq.PQ(M=N_books, Ks=N_words, verbose=True)
         pq.fit(vecs=embedded_features, iter=20, seed=42)
         # Save PQ object
-        aPQfile = open(PQfile_path, "wb")
+        # aPQfile = open(PQfile_path, "wb")
         with open(PQfile_path, 'wb') as aPQfile:
             pickle.dump(pq, aPQfile)
     else:
@@ -603,18 +603,27 @@ def matching_HNSW_NanoPQ(K, embedded_features, embedded_features_test, N_books, 
     Codewords = pq.codewords
     Codewords = np.transpose(Codewords, (1, 0, 2))
     Codewords = np.reshape(Codewords, (N_words, -1))
-
+    
+    num_test, _ = embedded_features_test.shape
     CW_idx_unique, reverse_idx = np.unique(CW_idx, return_inverse=True, axis=0)
     num_train, _ = CW_idx_unique.shape
-    key_list = range(num_train)
-    value_list = [np.where(reverse_idx == t)[0] for t in key_list]
-    dict_recover = dict(zip(key_list, value_list))
-    num_test, _ = embedded_features_test.shape
+
+    dicfile_path = 'outputs/' + dataset + '/' + 'dict_recover.pkl'
+
+    if ifgenerate:
+        key_list = range(num_train)
+        value_list = [np.where(reverse_idx == t)[0] for t in key_list]
+        dict_recover = dict(zip(key_list, value_list))
+        with open(dicfile_path, 'wb') as adicfile:
+            pickle.dump(dict_recover, adicfile)  
+    else: 
+        with open(dicfile_path, 'rb') as pickle_file:
+            dict_recover = pickle.load(pickle_file)
 
     file_path = 'outputs/' + dataset + '/' + 'HNSW_NanoPQ.pkl'
 
     if ifgenerate:
-        hnsw = HNSW('l2', m=4, ef=8, Codewords=Codewords, N_books=N_books)
+        hnsw = HNSW('l2', m=m, ef=ef, Codewords=Codewords, N_books=N_books)
         widgets = ['Progress: ', Percentage(), ' ', Bar('#'), ' ', Timer(), ' ', ETA()]
         pbar = ProgressBar(widgets=widgets, maxval=num_train).start()
         # Building HNSW graph
@@ -624,7 +633,7 @@ def matching_HNSW_NanoPQ(K, embedded_features, embedded_features_test, N_books, 
             pbar.update(i + 1)
         pbar.finish()
         # Save HNSW object
-        afile = open(file_path, "wb")
+        # afile = open(file_path, "wb")
         with open(file_path, 'wb') as afile:
             pickle.dump(hnsw, afile)   
     else:
@@ -809,7 +818,7 @@ def Nano_PQ(embedded_features, N_books, N_words):
 
     return embedded_code, Codewords, embedded_recon
 
-def matching_Nano_PQ(K, embedded_features_train, embedded_features_test, N_books, n_bits_perbook, dataset, ifgenerate=True):
+def matching_Nano_PQ(K, embedded_features_train, embedded_features_test, dataset, N_books=16, n_bits_perbook=8, ifgenerate=True):
     # https://nanopq.readthedocs.io/en/latest/source/tutorial.html#basic-of-pq
     N_words = 2**n_bits_perbook
     num_train, feature_len = embedded_features_train.shape
@@ -963,7 +972,7 @@ def matching_Greedyhash(K, hash_codes_train, hash_codes_test):
     return idx, time_per_query
 
 
-def matching_ANNOY(K, embedded_features_train, embedded_features_test, metric, dataset, ifgenerate=True):
+def matching_ANNOY(K, embedded_features_train, embedded_features_test, metric, dataset, n_trees=5, ifgenerate=True):
     num_train, feature_len = embedded_features_train.shape
     num_test, _ = embedded_features_test.shape
     
@@ -972,7 +981,6 @@ def matching_ANNOY(K, embedded_features_train, embedded_features_test, metric, d
 
     if ifgenerate:
         t = annoy.AnnoyIndex(feature_len, metric)
-        n_trees = 5
         for n, x in enumerate(embedded_features_train):
             t.add_item(n, x)
         t.build(n_trees)
