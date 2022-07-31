@@ -186,6 +186,8 @@ def loftr(loftr_weight_path, query_num, qimages, ranks, images, dataset, gnd):
 4 QGE
 This is the method we used in our work. QGE is a global feature-based re-ranking method. It is very 
 fast and accurate.
+
+We use diffusion from: https://github.com/fyang93/diffusion
 '''
 def QGE(ranks, qvecs, vecs, dataset, gnd, query_num, cache_dir, gnd_path2, RW, AQE):
     def feature_enhancement(it_times, k, ranks, qvecs, vecs, w):
