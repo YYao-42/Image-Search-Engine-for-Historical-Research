@@ -47,6 +47,8 @@ parser.add_argument('--datasets', '-d', metavar='DATASETS', default='roxford5k,r
                         " (default: 'oxford5k,paris6k')")
 parser.add_argument('--K-nearest-neighbour', '-K', default=30, type=int, metavar='K',
                     help="retreive top-K results (default: 30)")
+parser.add_argument('--ifgenerate', '-gen', dest='ifgenerate', action='store_true',
+                    help='Include --ifgenerate if the trees/graphs/distance tables have not been generated and saved')
 parser.add_argument('--image-size', '-imsize', default=1024, type=int, metavar='N',
                     help="maximum size of longer image side used for testing (default: 1024)")
 parser.add_argument('--multiscale', '-ms', metavar='MULTISCALE', default='[1]',
@@ -254,13 +256,15 @@ def index():
             qvec = whitenapply(qvec, Lw['m'], Lw['P'])
 
         # Run search
-        match_idx, _ = matching_L2(K, vecs.T, qvec.T)
-        # match_idx, time_per_query = matching_Nano_PQ(K, vecs.T, qvecs.T, 16, 8)
-        # match_idx, time_per_query = matching_ANNOY(K, vecs.T, qvec.T, 'euclidean','server', ifgenerate=True)
-        # match_idx, time_per_query = matching_HNSW(K, vecs.T, qvecs.T)
-        # embedded_code, Codewords, _ = Nano_PQ(vecs.T, 16, 256)
-        # match_idx, time_per_query = matching_PQ_Net(K, Codewords, qvecs.T, 16, embedded_code)
-        # match_idx, time_per_query = matching_HNSW_PQ(K, Codewords, qvecs.T, embedded_code)
+        # Select methods for preliminary ranking
+        # Set ifgenerate=True for the first time to build trees/graphs or to do quantization
+        # Then the generated trees, graphs, etc will be saved
+        # Set ifgenerate=False to skip all the preparations in later use
+        match_idx, _ = matching_L2(K, vecs.T, qvec.T)     
+        # match_idx, _ = matching_Nano_PQ(K, vecs.T, qvec.T, 16, 12, dataset='server', ifgenerate=args.ifgenerate)
+        # match_idx, _ = matching_ANNOY(K, vecs.T, qvec.T, 'euclidean', dataset='server', ifgenerate=args.ifgenerate)
+        # match_idx, _ = matching_HNSW(K, vecs.T, qvec.T, dataset='server', ifgenerate=args.ifgenerate)
+        # match_idx, _ = matching_HNSW_NanoPQ(K, vecs.T, qvec.T, 16, 256, dataset='server', ifgenerate=args.ifgenerate)
         
         # Re-ranking
         ranks = match_idx.T

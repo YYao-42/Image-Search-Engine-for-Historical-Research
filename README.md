@@ -29,11 +29,11 @@ To train the model, you should firstly make sure you have downloaded the trainin
 </details>
 
 <details><summary><b>Test</b></summary>
-
 <p>
-Firstly， please make sure you have downloaded the test datasets and put them under ~/data/test/.
+Firstly, please make sure you have downloaded the test datasets and put them under ~/data/test/.
 Then you can start retrieval tests as following:
-   
+
+
 ### Testing on R-Oxford, R-Paris
 
 ```ruby
@@ -65,14 +65,14 @@ You can use three re-ranking methods (QGE, SAHA, and LoFTR) in any datasets in t
    python3 -m ~src.server   # This is our pipeline with GUI.
 ```
 These two python files can help you to use re-ranking.  
-   
+
 By these files, you can test extracted features from any dataset. You can put preextracted features under this path: src/outputs/. And please unzip the file (utils_files.zip) in "src/utils/" before using.
 The pretrained feature extraction weight: https://drive.google.com/file/d/1fylhFYW0vYIBpYts_bx4IMiIPL34V5Yb/view?usp=sharing   
-   
+
 You can put rhe weight under this path: src/EXPORT_DIR_QZ/resnet101-gem-w-tri/
-   
+
 To test re-ranking methods, you can use the following api in the aforementioned two files:
-   
+
 For QGE:
 ```ruby
 QGE(ranks, qvecs, vecs, dataset, gnd, query_num, cache_dir, gnd_path2, RW, AQE)  
@@ -87,7 +87,7 @@ loftr(loftr_weight_path, query_num, qimages, ranks, images, dataset, gnd)
 ```
 If you want to use LoFTR, you need to download the pretrained LoFTR weight from: https://github.com/zju3dv/LoFTR  
 You can put the LoFTR weight under this path: src/utils/weights/  
-   
+
 You can find detailed annotations about how to use these re-ranking methods in Reranking.py, test_extracted.py and server.py.  
 
 </p>
