@@ -66,7 +66,10 @@ You can use three re-ranking methods (QGE, SAHA, and LoFTR) in any datasets in t
 ```
 These two python files can help you to use re-ranking.  
 
-By these files, you can test extracted features from any dataset. You can put preextracted features under this path: src/outputs/. And please unzip the file (utils_files.zip) in "src/utils/" before using.
+By these files, you can test extracted features from any dataset. You can put preextracted features under this path: src/outputs/. And please unzip the file (utils_files.zip) in "src/utils/" before using.  
+
+And please check paths in "test_extracted.py", "server.py", and "Reranking" (under "src/utils/") before using. You need to set your own paths on a Linux server or your local computer.   
+
 The pretrained feature extraction weight: https://drive.google.com/file/d/1fylhFYW0vYIBpYts_bx4IMiIPL34V5Yb/view?usp=sharing   
 
 You can put rhe weight under this path: src/EXPORT_DIR_QZ/resnet101-gem-w-tri/
