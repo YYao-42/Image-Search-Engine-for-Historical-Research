@@ -972,7 +972,7 @@ def matching_Greedyhash(K, hash_codes_train, hash_codes_test):
     return idx, time_per_query
 
 
-def matching_ANNOY(K, embedded_features_train, embedded_features_test, metric, dataset, n_trees=5, ifgenerate=True):
+def matching_ANNOY(K, embedded_features_train, embedded_features_test, metric, dataset, n_trees=100, ifgenerate=True):
     num_train, feature_len = embedded_features_train.shape
     num_test, _ = embedded_features_test.shape
     
