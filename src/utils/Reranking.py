@@ -363,7 +363,7 @@ def average_query_expansion(qvecs,vecs,K,dataset,gnd):
 '''
 6 Database Augmentation
 
-This another global feature-based re-ranking method, database augmentation. This method is accurate.
+This is another global feature-based re-ranking method, database augmentation. This method is accurate.
 But it is slower than QGE. Maybe there is a way to improve it.
 
 url: https://github.com/fuxinjiang/huawei2020/blob/6eaffa9f18732a27a29204834b22b57d9817f08e/utils/db_qe.py
