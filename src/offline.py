@@ -22,9 +22,7 @@ parser = argparse.ArgumentParser(description='Historical Image Retrieval')
 parser.add_argument('--network', '-n', metavar='NETWORK', default='resnet101-solar-best.pth', 
                     help="network to be evaluated. ")
 parser.add_argument('--datasets', '-d', metavar='DATASETS', default='roxford5k,rparis6k',
-                    help="comma separated list of test datasets: " +
-                        " | ".join(datasets_names) +
-                        " (default: 'roxford5k,rparis6k')")
+                    help="comma separated list of test datasets (default: 'roxford5k,rparis6k')")
 parser.add_argument('--image-size', '-imsize', dest='image_size', default=1024, type=int, metavar='N',
                     help="maximum size of longer image side used for testing (default: 1024)")
 parser.add_argument('--multiscale', '-ms', metavar='MULTISCALE', default='[1, 2**(1/2), 1/2**(1/2)]',

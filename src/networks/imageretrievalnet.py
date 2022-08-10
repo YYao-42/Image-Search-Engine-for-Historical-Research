@@ -382,17 +382,17 @@ def extract_vectors(net, images, image_size, transform, bbxs=None, ms=[1], msp=1
 
     return vecs
 
-def extr_selfmade_dataset(net, selfmadedataset, image_size, transform, ms, msp):
+def extr_selfmade_dataset(net, selfmadedataset, image_size, transform, ms=[1], msp=1):
     if selfmadedataset == 'GLM/test':
-        path_head = '/home/yananhu/SOLAR/data/test/GLM/'
+        path_head = '/home/yuanyuanyao/data/test/GLM/'
         df = pd.read_csv(path_head + 'retrieval_solution_v2.1.csv', usecols= ['id','images'])
         df_filtered = df.loc[df['images'] != 'None']
         query_id = df_filtered['id'].tolist()
         images = [path_head+'test/'+id[0]+'/'+id[1]+'/'+id[2]+'/'+id+'.jpg' for id in query_id]
         img_r_path = [os.path.relpath(path, "/home/yuanyuanyao/data/") for path in images]
     else:
-        folder_path = os.path.join('/home/yananhu/SOLAR/data/test', selfmadedataset)
-        images, img_r_path = path_all_jpg(folder_path, start="/home/yananhu/SOLAR/data/test")
+        folder_path = os.path.join('/home/yuanyuanyao/data/test', selfmadedataset)
+        images, img_r_path = path_all_jpg(folder_path, start="/home/yuanyuanyao/data")
     # extract database vectors
     print('>> {}: images...'.format(selfmadedataset))
     vecs = extract_vectors(net, images, image_size, transform, ms=ms, msp=msp)
