@@ -1,0 +1,25 @@
+albumentations==1.2.1
+annoy==1.17.1
+einops==0.4.1
+# faiss==1.5.3
+Flask==2.2.2
+h5py==3.7.0
+joblib==1.1.0
+kornia==0.6.6
+kornia_moons==0.2.0
+loguru==0.6.0
+matplotlib==3.5.2
+nanopq==0.1.11
+numpy==1.23.1
+pandas==1.4.3
+Pillow==9.2.0
+progressbar33==2.4
+pytorch_lightning==1.7.1
+scikit_learn==1.1.2
+scipy==1.9.0
+tensorboard==2.10.0
+tensorflow==2.9.1
+torch==1.12.1
+torchvision==0.13.1
+tqdm==4.64.0
+yacs==0.1.8
