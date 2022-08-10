@@ -8,9 +8,6 @@ import argparse
 import pickle
 import torch as T
 import numpy as np
-import numba
-import numba.cuda
-from numba import jit
 
 import torchvision
 import torch.nn as nn
@@ -21,7 +18,6 @@ from numpy import linalg as LA
 from torch.autograd import Variable
 from torchvision.datasets import CIFAR10
 import faiss
-
 import nanopq
 import annoy
 # import nmslib

@@ -2,7 +2,7 @@ import torch
 import torch.nn as nn
 from torch.nn.parameter import Parameter
 from torch.autograd import Variable
-from layers.functional import Soft_Quantization, feature_normlization
+from src.layers.functional import Soft_Quantization, feature_normlization
 
 
 class Soft_PQ(nn.Module):
