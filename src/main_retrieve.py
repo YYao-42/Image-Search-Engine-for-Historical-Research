@@ -14,7 +14,7 @@ import torch
 from torch.utils.model_zoo import load_url
 from torchvision import transforms
 
-from src.networks.imageretrievalnet import extract_vectors_PQ, init_network, extract_vectors
+from src.networks.imageretrievalnet import extract_vectors_PQ, init_network, extract_vectors, extr_selfmade_dataset
 from src.datasets.testdataset import configdataset
 from src.datasets.datahelpers import cid2filename
 from src.utils.download import download_test
@@ -63,37 +63,6 @@ parser.add_argument('--gpu-id', '-g', default='0', metavar='N',
 # parse the arguments
 args = parser.parse_args()
 
-
-def extr_selfmade_dataset(net, selfmadedataset, transform, ms, msp):
-    # folder_path = os.path.join(get_data_root(), 'test', selfmadedataset)
-    # local disk 
-    # folder_path = os.path.join('/home/yuanyuanyao/data/test', selfmadedataset) 
-    # img_r_path = os.listdir(folder_path)
-    # images = [os.path.join(folder_path, rel_path) for rel_path in img_r_path]
-    if selfmadedataset == 'GLM/test':
-        path_head = '/home/yananhu/SOLAR/data/test/GLM/'
-        df = pd.read_csv(path_head + 'retrieval_solution_v2.1.csv', usecols= ['id','images'])
-        df_filtered = df.loc[df['images'] != 'None']
-        query_id = df_filtered['id'].tolist()
-        images = [path_head+'test/'+id[0]+'/'+id[1]+'/'+id[2]+'/'+id+'.jpg' for id in query_id]
-        img_r_path = [os.path.relpath(path, "/home/yuanyuanyao/data/") for path in images]
-    else:
-        folder_path = os.path.join('/home/yananhu/SOLAR/data/test', selfmadedataset)
-        images, img_r_path = path_all_jpg(folder_path, start="/home/yananhu/SOLAR/data/test")
-    # extract database vectors
-    print('>> {}: images...'.format(selfmadedataset))
-    vecs = extract_vectors(net, images, args.image_size, transform, ms=ms, msp=msp)
-    # convert to numpy
-    vecs = vecs.numpy()
-
-    # learned whiten (replaced by end to end whiten layer) 
-    #if Lw is not None:
-        # whiten the vectors
-    #    vecs_lw  = whitenapply(vecs, Lw['m'], Lw['P'])
-    #    vecs = vecs_lw
-
-    save_path_feature(selfmadedataset, vecs, img_r_path)
-
 def main():
     args = parser.parse_args()
 
@@ -104,7 +73,7 @@ def main():
 
     # check if test dataset are downloaded
     # and download if they are not
-    download_test(get_data_root())
+    # download_test(get_data_root())
 
     # setting up the visible GPU
     os.environ['CUDA_VISIBLE_DEVICES'] = args.gpu_id
@@ -147,8 +116,8 @@ def main():
     # evaluate on test datasets
     datasets = args.datasets.split(',')
     for dataset in datasets:
-        summary_ranks  = tb_setup(os.path.join('outputs/ranks/', dataset, args.network))
-        summary_embeddings = tb_setup(os.path.join('outputs/embeddings/', dataset, args.network))
+        # summary_ranks  = tb_setup(os.path.join('outputs/ranks/', dataset, args.network))
+        # summary_embeddings = tb_setup(os.path.join('outputs/embeddings/', dataset, args.network))
         start = time.time()
 
 
@@ -164,24 +133,7 @@ def main():
             bbxs = [tuple(cfg['gnd'][i]['bbx']) for i in range(cfg['nq'])]
         except:
             bbxs = None  # for holidaysmanrot and copydays
-
-        print('')
-        print('>> selfmadedataset: Extracting...')
-        # Extract features of selfmade datasets
-        # extr_selfmade_dataset(net, 'Andrea', transform, ms, msp, Lw)
-        # extr_selfmade_dataset(net, 'flickr100k', transform, ms, msp, Lw)
-        # extr_selfmade_dataset(net, 'custom/database', transform, ms, msp)
-        # extr_selfmade_dataset(net, 'custom/query', transform, ms, msp)
-        start = time.time()
-        extr_selfmade_dataset(net, 'GLM/test', transform, ms, msp)
-        extract_time= time.time() - start
-        extract_time_per = extract_time/1129
-        print('>> GLM : extracted time per image {}'.format(extract_time_per))
-
-        extr_selfmade_dataset(net, 'GLM/index', transform, ms, msp)
         
-        
-        print('')
         print('>> {}: Extracting...'.format(dataset))
 
         # extract database and query vectors
@@ -229,7 +181,15 @@ def main():
         # print('')
         print('>> {}: elapsed time: {}'.format(dataset, htime(time.time()-start)))
 
-        
+    print('>> selfmadedataset: Extracting...')
+    # Extract features of selfmade datasets
+    # extr_selfmade_dataset(net, 'custom/database', args.image_size, transform, ms, msp)
+    # start = time.time()
+    # extr_selfmade_dataset(net, 'GLM/test', args.image_size, transform, ms, msp)
+    # extract_time= time.time() - start
+    # extract_time_per = extract_time/1129
+    # print('>> GLM : extracted time per image {}'.format(extract_time_per))
+    # extr_selfmade_dataset(net, 'GLM/index', args.image_size, transform, ms, msp)
 
 if __name__ == '__main__':
     main()
