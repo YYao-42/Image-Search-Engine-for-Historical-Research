@@ -76,7 +76,7 @@ def save_path_feature(dataset, vecs, img_r_path):
 
     if '/' in dataset:
         dataset = dataset.replace('/', '_')
-    file_path_feature = 'outputs/features/' + dataset  +'_path_feature_multi2.pkl'
+    file_path_feature = 'outputs/features/' + dataset  +'_path_feature.pkl'
     afile = open(file_path_feature, "wb")
     pickle.dump(path_feature, afile)
     afile.close()
@@ -84,7 +84,7 @@ def save_path_feature(dataset, vecs, img_r_path):
 def load_path_features(dataset):
     if '/' in dataset:
         dataset = dataset.replace('/', '_')
-    file_path_feature = 'outputs/features/' + dataset + '_path_feature_single.pkl'
+    file_path_feature = 'outputs/features/' + dataset + '_path_feature.pkl'
     with open(file_path_feature, 'rb') as pickle_file:
         path_feature = pickle.load(pickle_file)
     vecs = path_feature['feature']
