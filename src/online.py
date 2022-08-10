@@ -87,20 +87,16 @@ transform = transforms.Compose([
 #############
 # Read image features
 datasets = args.datasets.split(',')
-# TODO: give a parameter for 2048
-vecs = np.empty((2048, 0))
+dim_vec = 2048
+vecs = np.empty((dim_vec, 0))
 img_paths = []
 for dataset in datasets:
-    cfg = configdataset(dataset, os.path.join('/home/qzhang7/data', 'test'))
-    file_vecs = 'outputs/' + dataset + '_vecs.npy' # this is for extracted vecs files location
-    # I only use ro and rp in this file 
-    vecs = np.concatenate([vecs, np.load(file_vecs)], axis=1)
-    # images = [cfg['im_fname'](cfg, i) for i in range(cfg['n'])]
-    images_r_path = [cfg['im_fname'](cfg, i).split('\\')[-1] for i in range(cfg['n'])]
-    # img_paths = img_paths + images_r_path # I added this
-    # print(images_r_path)
-    images = ['/static/test/' + dataset + '/jpg/' + i.split('/')[-1] for i in images_r_path] # original one
-    img_paths = img_paths + images  # original one
+    file_path_feature = 'outputs/' + dataset + '_path_feature.pkl'
+    with open(file_path_feature, 'rb') as pickle_file:
+        path_feature = pickle.load(pickle_file)
+    vecs = np.concatenate([vecs, path_feature['feature']], axis=1)
+    images = ['/static/' + i for i in path_feature['path']]
+    img_paths = img_paths + images
 
 K = args.K_nearest_neighbour
 
@@ -117,7 +113,7 @@ def index():
         img.save(uploaded_img_path)
         query_path = '/static/' + '/'.join(uploaded_img_path.split('/')[1:])
         print(query_path)
-        qvec = extract_vectors(net, uploaded_img_path, args.image_size, transform, ms=ms,  mode='test')
+        qvec = extract_vectors(net, uploaded_img_path, args.image_size, transform, ms=ms, mode='test')
         qvec = np.expand_dims(qvec.numpy(), axis=1)
 
         # Run search
