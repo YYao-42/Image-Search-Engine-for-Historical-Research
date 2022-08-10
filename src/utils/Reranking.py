@@ -206,7 +206,7 @@ def QGE(ranks, qvecs, vecs, dataset, gnd, query_num, cache_dir, gnd_path2, RW, A
         return qvecs_qe, ranks_aqe
 
     if RW == True: 
-    # For database with less than 120,000 images, we use this setting to improve accuracy.
+    # For database with less than 120,000 images and there are a lot of (high ratio) correct images, we use this setting to improve accuracy.
        T_qe_1=time.time()
        k = 10 # k refers to top k results in preliminary ranks
        w = 8. / 2
@@ -363,7 +363,7 @@ def average_query_expansion(qvecs,vecs,K,dataset,gnd):
 '''
 6 Database Augmentation
 
-This another global feature-based re-ranking method, database augmentation. This method is accurate.
+This is another global feature-based re-ranking method, database augmentation. This method is accurate.
 But it is slower than QGE. Maybe there is a way to improve it.
 
 url: https://github.com/fuxinjiang/huawei2020/blob/6eaffa9f18732a27a29204834b22b57d9817f08e/utils/db_qe.py
