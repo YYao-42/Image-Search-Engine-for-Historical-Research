@@ -24,13 +24,12 @@ import torchvision.models as models
 from src.networks.imageretrievalnet import init_network, extract_vectors
 from src.layers.loss import ContrastiveLoss, TripletLoss, SOSLoss
 from src.datasets.datahelpers import collate_tuples, cid2filename, unnormalise
-from src.datasets.traindataset import TuplesBatchedDataset
+from src.datasets.traindataset import TuplesBatchedDataset, TuplesDataset
 from src.datasets.testdataset import configdataset
 from src.utils.download import download_test
 from src.utils.whiten import whitenlearn, whitenapply
 from src.utils.evaluate import compute_map_and_print
 from src.utils.general import get_data_root, htime
-from src.utils.plots import *
 
 
 warnings.filterwarnings("ignore", "(Possibly )?corrupt EXIF data", UserWarning)
@@ -173,7 +172,7 @@ def main():
 
     # check if test dataset are downloaded
     # and download if they are not
-    download_test(get_data_root())
+    # download_test(get_data_root())
 
     # create export dir if it doesnt exist
     directory = "{}".format(args.training_dataset)
