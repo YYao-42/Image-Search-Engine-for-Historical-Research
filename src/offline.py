@@ -84,8 +84,11 @@ for dataset in datasets:
     print('>> {}: Extracting...'.format(dataset))
     extr_selfmade_dataset(net, dataset, args.image_size, transform, ms)
 
+dim_vec = 2048
+vecs = np.empty((dim_vec, 0))
+img_paths = []
 for dataset in datasets:
-    file_path_feature = 'outputs/' + dataset + '_path_feature.pkl'
+    file_path_feature = 'outputs/features/' + dataset + '_path_feature.pkl'
     with open(file_path_feature, 'rb') as pickle_file:
         path_feature = pickle.load(pickle_file)
     vecs = np.concatenate([vecs, path_feature['feature']], axis=1)
@@ -94,7 +97,7 @@ for dataset in datasets:
 
 # During the offline procedure, qvec doesn't matter. It can be anything since the construction of tree, graph, etc does not
 # depend on qvec. Similar for K.
-qvec = vecs[:,0]
+qvec = np.zeros((dim_vec, 1))
 K = args.K_nearest_neighbour
 
 # Note: parameters like N_books, n_bits_perbook, n_trees, etc will significantly influence the retrieval performance and efficiency
@@ -103,12 +106,12 @@ K = args.K_nearest_neighbour
 if args.matching_method == 'L2':
     match_idx, _ = matching_L2(K, vecs.T, qvec.T)
 elif args.matching_method == 'PQ':
-    match_idx, _ = matching_Nano_PQ(K, vecs.T, qvec.T, dataset='server', N_books=16, n_bits_perbook=13, ifgenerate=args.ifgenerate)
+    match_idx, _ = matching_Nano_PQ(K, vecs.T, qvec.T, dataset='database', N_books=16, n_bits_perbook=13, ifgenerate=args.ifgenerate)
 elif args.matching_method == 'ANNOY':
-    match_idx, _ = matching_ANNOY(K, vecs.T, qvec.T, 'euclidean', dataset='server', n_trees=100, ifgenerate=args.ifgenerate)
+    match_idx, _ = matching_ANNOY(K, vecs.T, qvec.T, 'euclidean', dataset='database', n_trees=100, ifgenerate=args.ifgenerate)
 elif args.matching_method == 'HNSW':
-    match_idx, _ = matching_HNSW(K, vecs.T, qvec.T, dataset='server', m=16, ef=100, ifgenerate=args.ifgenerate)
+    match_idx, _ = matching_HNSW(K, vecs.T, qvec.T, dataset='database', m=16, ef=100, ifgenerate=args.ifgenerate)
 elif args.matching_method == 'PQ_HNSW':
-    match_idx, _ = matching_HNSW_NanoPQ(K, vecs.T, qvec.T, dataset='server', N_books=16, N_words=2**13, m=16, ef=100, ifgenerate=args.ifgenerate)
+    match_idx, _ = matching_HNSW_NanoPQ(K, vecs.T, qvec.T, dataset='database', N_books=16, N_words=2**13, m=16, ef=100, ifgenerate=args.ifgenerate)
 else:
     print('Invalid method')

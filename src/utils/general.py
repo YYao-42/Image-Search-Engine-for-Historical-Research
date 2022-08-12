@@ -66,9 +66,9 @@ def path_all_jpg(directory, start):
 
 def save_path_feature(dataset, vecs, img_r_path):
     # save the dictionary of paths and features of images into a pkl file    
-    isExist = os.path.exists('outputs')
+    isExist = os.path.exists('outputs/features')
     if not isExist:
-        os.makedirs('outputs')
+        os.makedirs('outputs/features')
     
     path_feature = {}
     path_feature['path'] = img_r_path
