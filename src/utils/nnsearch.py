@@ -577,6 +577,7 @@ def matching_HNSW_NanoPQ(K, embedded_features, embedded_features_test, dataset, 
     eftest_norm = np.expand_dims(eftest_norm, axis=1)
     embedded_features = embedded_features / eftrain_norm
     embedded_features_test = embedded_features_test / eftest_norm
+    embedded_features = embedded_features.astype(np.float32)
 
     if not os.path.exists('outputs/' + dataset):
             os.makedirs('outputs/' + dataset)
@@ -803,6 +804,7 @@ def Nano_PQ(embedded_features, N_books, N_words):
     eftrain_norm = np.linalg.norm(embedded_features, axis=1)
     eftrain_norm = np.expand_dims(eftrain_norm, axis=1)
     embedded_features = embedded_features / eftrain_norm
+    embedded_features = embedded_features.astype(np.float32)
 
     pq = nanopq.PQ(M=N_books, Ks=N_words, verbose=True)
     pq.fit(vecs=embedded_features, iter=20, seed=42)
@@ -826,6 +828,8 @@ def matching_Nano_PQ(K, embedded_features_train, embedded_features_test, dataset
     eftest_norm = np.expand_dims(eftest_norm, axis=1)
     embedded_features_train = embedded_features_train / eftrain_norm
     embedded_features_test = embedded_features_test / eftest_norm
+    embedded_features_train = embedded_features_train.astype(np.float32)
+    embedded_features_test = embedded_features_test.astype(np.float32)
 
     if not os.path.exists('outputs/' + dataset):
         os.makedirs('outputs/' + dataset)
