@@ -18,15 +18,15 @@ import kornia as K
 import kornia.feature as KF
 from kornia_moons.feature import *
 
-from utils.src.utils.plotting import make_matching_figure
-from utils.src.loftr import LoFTR, default_cfg
-from utils.adalam import AdalamFilter
-from utils.dataset import Dataset
-from utils.diffusion import Diffusion
-from utils.knn import KNN
-from utils.nnsearch import *
-from utils.evaluate import compute_map_and_print
-from utils.evaluate2 import compute_map_and_print2
+from src.utils.src.utils.plotting import make_matching_figure
+from src.utils.src.loftr import LoFTR, default_cfg
+from src.utils.adalam import AdalamFilter
+from src.utils.dataset import Dataset
+from src.utils.diffusion import Diffusion
+from src.utils.knn import KNN
+from src.utils.nnsearch import *
+from src.utils.evaluate import compute_map_and_print
+from src.utils.evaluate2 import compute_map_and_print2
 
 '''
 2 SAHA online

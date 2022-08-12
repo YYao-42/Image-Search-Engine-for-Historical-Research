@@ -6,7 +6,7 @@ from joblib import Parallel, delayed
 import scipy.sparse as sparse
 import scipy.sparse.linalg as linalg
 from tqdm import tqdm
-from utils.knn import KNN, ANN
+from src.utils.knn import KNN, ANN
 
 trunc_ids = None
 trunc_init = None
