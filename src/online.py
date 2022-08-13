@@ -7,14 +7,14 @@ import warnings
 import numpy as np
 from PIL import Image
 from torchvision import transforms
-from imageretrievalnet import init_network, extract_vectors
+from src.networks.imageretrievalnet import init_network, extract_vectors, extract_vectors_single
 from datetime import datetime as dt
 from flask import Flask, request, render_template
 from pathlib import Path
-from datasets.testdataset import configdataset
-from utils.nnsearch import *
-from utils.Reranking import *
-from utils.networks import load_network
+from src.datasets.testdataset import configdataset
+from src.utils.nnsearch import *
+from src.utils.Reranking import *
+from src.utils.networks import load_network
 
 
 datasets_names = ['oxford5k', 'paris6k', 'roxford5k', 'rparis6k', 'revisitop1m']
@@ -91,13 +91,14 @@ dim_vec = 2048
 vecs = np.empty((dim_vec, 0))
 img_paths = []
 for dataset in datasets:
-    file_path_feature = 'outputs/' + dataset + '_path_feature.pkl'
+    file_path_feature = 'outputs/features/' + dataset + '_path_feature.pkl'
     with open(file_path_feature, 'rb') as pickle_file:
         path_feature = pickle.load(pickle_file)
     vecs = np.concatenate([vecs, path_feature['feature']], axis=1)
     images = ['/static/' + i for i in path_feature['path']]
     img_paths = img_paths + images
 
+rel_img_paths = [os.path.relpath(path, '/static/test/') for path in img_paths]
 K = args.K_nearest_neighbour
 
 @app.route('/', methods=['GET', 'POST'])
@@ -107,13 +108,13 @@ def index():
 
         # Save query image
         img = Image.open(file.stream)  # PIL image
-        # if not os.path.exists("static/uploaded/"):
-        #     os.makedirs("static/uploaded/")
-        uploaded_img_path = "static/upload/" + dt.now().isoformat().replace(":", ".") + "_" + file.filename
+        if not os.path.exists("src/static/uploaded/"):
+            os.makedirs("src/static/uploaded/")
+        uploaded_img_path = "src/static/upload/" + dt.now().isoformat().replace(":", ".") + "_" + file.filename
         img.save(uploaded_img_path)
-        query_path = '/static/' + '/'.join(uploaded_img_path.split('/')[1:])
+        query_path = '/' + '/'.join(uploaded_img_path.split('/')[1:])
         print(query_path)
-        qvec = extract_vectors(net, uploaded_img_path, args.image_size, transform, ms=ms, mode='test')
+        qvec = extract_vectors_single(net, uploaded_img_path, args.image_size, transform, ms=ms)
         qvec = np.expand_dims(qvec.numpy(), axis=1)
 
         # Run search
@@ -126,13 +127,13 @@ def index():
         if args.matching_method == 'L2':
             match_idx, _ = matching_L2(K, vecs.T, qvec.T)
         elif args.matching_method == 'PQ':
-            match_idx, _ = matching_Nano_PQ(K, vecs.T, qvec.T, dataset='server', N_books=16, n_bits_perbook=13, ifgenerate=args.ifgenerate)
+            match_idx, _ = matching_Nano_PQ(K, vecs.T, qvec.T, dataset='database', N_books=16, n_bits_perbook=13, ifgenerate=args.ifgenerate)
         elif args.matching_method == 'ANNOY':
-            match_idx, _ = matching_ANNOY(K, vecs.T, qvec.T, 'euclidean', dataset='server', n_trees=100, ifgenerate=args.ifgenerate)
+            match_idx, _ = matching_ANNOY(K, vecs.T, qvec.T, 'euclidean', dataset='database', n_trees=100, ifgenerate=args.ifgenerate)
         elif args.matching_method == 'HNSW':
-            match_idx, _ = matching_HNSW(K, vecs.T, qvec.T, dataset='server', m=16, ef=100, ifgenerate=args.ifgenerate)
+            match_idx, _ = matching_HNSW(K, vecs.T, qvec.T, dataset='database', m=16, ef=100, ifgenerate=args.ifgenerate)
         elif args.matching_method == 'PQ_HNSW':
-            match_idx, _ = matching_HNSW_NanoPQ(K, vecs.T, qvec.T, dataset='server', N_books=16, N_words=2**13, m=16, ef=100, ifgenerate=args.ifgenerate)
+            match_idx, _ = matching_HNSW_NanoPQ(K, vecs.T, qvec.T, dataset='database', N_books=16, N_words=2**13, m=16, ef=100, ifgenerate=args.ifgenerate)
         else:
             print('Invalid method')
 
@@ -142,12 +143,11 @@ def index():
         ranks2 = qge1(ranks, qvec, vecs, K)
         idx2 = ranks2.T
 
-        # TODO: id -> dist[id]
-        scores1 = [(id, img_paths[id]) for id in np.squeeze(match_idx)[:10]]
-        scores2 = [(id, img_paths[id]) for id in np.squeeze(idx2)[:10]]
+        # scores1 = [(id, img_paths[id]) for id in np.squeeze(match_idx)[:10]]
+        scores2 = [(rel_img_paths[id], img_paths[id]) for id in np.squeeze(idx2)[:K]]
         return render_template('index.html', 
                                query_path=query_path,
-                               scores=scores1,
+                            #    scores=scores1,
                                marks=scores2)
     else:
         return render_template('index.html')
