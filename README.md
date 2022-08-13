@@ -1,5 +1,14 @@
-## Our pipeline
+# Codebase for Image-Based Query Search Engine via Deep Learning
+
+We have designed and implemented an image-based query search engine that strikes a good balance between efficiency and accuracy. Users can submit any image they want to search for, and the engine will return similar images in a custom database. The main components of the system are shown in the following diagram:
 ![pipeline](https://user-images.githubusercontent.com/76591676/181504716-76a20f35-3485-4489-8f81-1104651e2c05.png)
+
+This work is a combination of three master's thesis projects. Welcome to check out our theses via the following links:
+- [ ] Yanan Hu (feature extraction): 
+- [x] Yuanyuan Yao (nearest neighbour search): https://repository.tudelft.nl/islandora/object/uuid:4a2c9c6f-b2b8-41d6-9b70-69c4f246c964
+- [x] Qi Zhang (Re-ranking): https://repository.tudelft.nl/islandora/object/uuid%3A32e02913-ba0d-446a-9807-1129ba4a314b
+- [ ] *Add the link to the publication if the work is eventually published*
+- [ ] *Add the link to the interface if the work is integrated into [EHM](https://engineeringhistoricalmemory.com/Aggregators.php)*
 
 ## Usage
 <details><summary><b>Training</b></summary>
