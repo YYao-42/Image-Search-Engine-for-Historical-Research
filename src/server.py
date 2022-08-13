@@ -276,7 +276,7 @@ def index():
         scores2 = [(id, img_paths[id]) for id in np.squeeze(idx2)[:10]]
         return render_template('index.html', 
                                query_path=query_path,
-                               scores=scores1,
+#                                scores=scores1,
                                marks=scores2)
     else:
         return render_template('index.html')
