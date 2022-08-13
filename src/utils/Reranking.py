@@ -298,7 +298,7 @@ def qge1(ranks, qvec, vecs, K):
     k = 3 
     w = 8. / 2
     it_times = 1 
-    qvecs_qe, ranks_aqe = feature_enhancement(it_times, k, ranks, vecs, w)
+    qvecs_qe, ranks_aqe = feature_enhancement(it_times, k, ranks, qvec, vecs, w)
     return ranks_aqe
 
 '''
