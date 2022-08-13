@@ -10,15 +10,15 @@ import numpy as np
 
 import torch
 from torch.utils.model_zoo import load_url
-from torch.utils.tensorboard import SummaryWriter
 from torchvision import transforms
 
 from src.networks.imageretrievalnet import init_network, extract_vectors
 from src.datasets.testdataset import configdataset
 from src.utils.download import download_test
 from src.utils.evaluate import compute_map_and_print
-from src.utils.general import get_data_root, htime
+from src.utils.general import get_data_root, htime, save_path_feature, load_path_features
 from src.utils.networks import load_network
+from src.utils.Reranking import *
 
 
 datasets_names = ['oxford5k', 'paris6k', 'roxford5k', 'rparis6k', 'revisitop1m']
@@ -40,33 +40,14 @@ parser.add_argument('--soa', action='store_true',
                     help='use soa blocks')
 parser.add_argument('--soa-layers', type=str, default='45',
                     help='config soa blocks for second-order attention')
+parser.add_argument('--include1m', '-1m', dest='include1m', action='store_true',
+                    help='Whether include 1 million distractors')
 
 # GPU ID
 parser.add_argument('--gpu-id', '-g', default='0', metavar='N',
                     help="gpu id used for testing (default: '0')")
 
 warnings.filterwarnings("ignore", category=UserWarning)
-
-
-def tb_setup(save_dir):
-    # Setup for tensorboard
-    tb_save_dir = os.path.join(
-                    save_dir,
-                    'summary',
-                    )
-    if not os.path.exists(tb_save_dir):
-        os.makedirs(tb_save_dir)
-    
-    trash_list = os.listdir(tb_save_dir)
-    for entry in trash_list:
-        filename = os.path.join(tb_save_dir, entry)
-        if fnmatch.fnmatch(entry, '*tfevents*'):
-            os.remove(filename)
-
-    summary = SummaryWriter(log_dir=tb_save_dir)
-
-    return summary
-
 
 def main():
     args = parser.parse_args()
@@ -119,29 +100,40 @@ def main():
         # prepare config structure for the test dataset
         cfg = configdataset(dataset, os.path.join(get_data_root(), 'test'))
         images = [cfg['im_fname'](cfg,i) for i in range(cfg['n'])]
+        images_r_path = [os.path.relpath(path, get_data_root()) for path in images]
         qimages = [cfg['qim_fname'](cfg,i) for i in range(cfg['nq'])]
+        qimages_r_path = [os.path.relpath(path, get_data_root()) for path in qimages]
         try:
             bbxs = [tuple(cfg['gnd'][i]['bbx']) for i in range(cfg['nq'])]
         except:
             bbxs = None  # for holidaysmanrot and copydays
 
         # extract database and query vectors
-        print('>> {}: database images...'.format(dataset))
-        vecs = extract_vectors(net, images, args.image_size, transform, ms=ms, mode='test')
+        # print('>> {}: database images...'.format(dataset))
+        # vecs = extract_vectors(net, images, args.image_size, transform, ms=ms, mode='test')
+        # vecs = vecs.numpy()
 
-        print('>> {}: query images...'.format(dataset))
-        qvecs = extract_vectors(net, qimages, args.image_size, transform, bbxs=bbxs, ms=ms, mode='test')
-        qvecs = qvecs.numpy()
+        # print('>> {}: query images...'.format(dataset))
+        # qvecs = extract_vectors(net, qimages, args.image_size, transform, bbxs=bbxs, ms=ms, mode='test')
+        # qvecs = qvecs.numpy()
 
         print('>> {}: Evaluating...'.format(dataset))
 
-        vecs_1m = torch.load(args.network + '_vecs_' + 'revisitop1m' + '.pt')
-        vecs = torch.cat([vecs, vecs_1m], dim=1)
-        vecs = vecs.numpy()
+        # save_path_feature(dataset + '_db', vecs, images_r_path)
+        # save_path_feature(dataset + '_query', qvecs, qimages_r_path)
+
+        vecs, _ = load_path_features(dataset + '_db')
+        qvecs, _ = load_path_features(dataset + '_query')
+
+        if args.include1m: # whether to include 1 million distractors
+            vecs_1m = torch.load(args.network + '_vecs_' + 'revisitop1m' + '.pt')
+            vecs_1m = vecs_1m.numpy()
+            vecs = np.concatenate([vecs, vecs_1m], axis=1)
 
         # search, rank, and print
         scores = np.dot(vecs.T, qvecs)
         ranks = np.argsort(-scores, axis=0)
+        ranks = qge1(ranks, qvecs, vecs, K)
         compute_map_and_print(dataset, ranks, cfg['gnd'])
 
         print('>> {}: elapsed time: {}'.format(dataset, htime(time.time()-start)))
