@@ -6,4 +6,12 @@ src/networks/__pycache__/
 src/layers/__pycache__/
 src/utils/__pycache__/
 src/static
+src/utils/adalam/__pycache__
+src/utils/src/__pycache__
+src/utils/src/utils/__pycache__
+src/utils/src/loftr/__pycache__
+src/utils/src/loftr/backbone/__pycache__
+src/utils/src/loftr/loftr_module/__pycache__
+src/utils/src/loftr/utils/__pycache__
 .vscode/
+resnet101-solar-best.pth_vecs_revisitop1m.pt

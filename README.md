@@ -19,7 +19,7 @@ This work is a combination of three master's thesis projects. Welcome to check o
    Faiss needs to be installed manually: `pip install faiss-gpu`  
    The torch version and cuda version should be compatible
 3. Download the pretrained network from https://drive.google.com/drive/folders/1JbGNvQgqKm7GiUvOqw1DSncSVR3k0xbm?usp=sharing and save it under data/networks
-4. Change the paths in function `extr_selfmade_dataset` (src/networks/imageretrievalnet.py) to the paths of your datasets
+4. Change the paths in function `extr_selfmade_dataset` (src/networks/imageretrievalnet.py) to the paths of your datasets (which are just folers contain jpg images)
 5. [Create symbolic link](https://www.freecodecamp.org/news/symlink-tutorial-in-linux-how-to-create-and-remove-a-symbolic-link/) to map your datasets under static/test/
 6. Run offline.py to extract and save the features of images  
    ```bash
