@@ -14,20 +14,24 @@ This work is a combination of three master's thesis projects. Welcome to check o
 ## To simply use the pretrained models directly:
 - [ ] Add a directory tree
 1. [Create and activate a virtual python environment](https://docs.python.org/3/library/venv.html)
-2. Install packages using requirements.txt
-   `pip install -r requirements.txt`\\
-   Faiss needs to be installed manually: `pip install faiss-gpu`\\
+2. Install packages using requirements.txt  
+   `pip install -r requirements.txt`  
+   Faiss needs to be installed manually: `pip install faiss-gpu`  
    The torch version and cuda version should be compatible
 3. Download the pretrained network from https://drive.google.com/drive/folders/1JbGNvQgqKm7GiUvOqw1DSncSVR3k0xbm?usp=sharing and save it under data/networks
 4. Change the paths in function `extr_selfmade_dataset` (src/networks/imageretrievalnet.py) to the paths of your datasets
 5. [Create symbolic link](https://www.freecodecamp.org/news/symlink-tutorial-in-linux-how-to-create-and-remove-a-symbolic-link/) to map your datasets under static/test/
-6. Run offline.py to extract and save the features of images
-   `python3 -m src.offline --datasets 'YOUR_DATASET_1, YOUR_DATASET_2, …, YOUR_DATASET_N' --gpu '0' --network 'resnet101-solar-best.pth' --K-nearest-neighbour 100`
+6. Run offline.py to extract and save the features of images  
+   ```bash
+   python3 -m src.offline --datasets 'YOUR_DATASET_1, YOUR_DATASET_2, …, YOUR_DATASET_N' --gpu '0' --network 'resnet101-solar-best.pth' --K-nearest-neighbour 100
+   ```
    - The datasets will be merged to be your database. Given a query image, the engine will find the most similar images in the database.
    - If the database is large-scale (>100k), then you may need to use approximate nearest neighbour search methods, e.g., ANNOY.  Select it by adding `--matching_method 'ANNOY' --ifgenerate` after the original command. It is normal that offline.py runs for a long time (even for days if the database is million-scale and HNSW or PQ_HNSW is chosen).
    - Still, pay attention to the paths of the outputs. You can find and modify the settings in functions save_path_feature and load_path_feature (src/utils/general.py).
-7. Run online.py
-   `python3 -m src.online --datasets 'YOUR_DATASET_1, YOUR_DATASET_2, …, YOUR_DATASET_N' --gpu '0' --network 'resnet101-solar-best.pth' --K-nearest-neighbour 100`
+7. Run online.py  
+   ```bash
+   python3 -m src.online --datasets 'YOUR_DATASET_1, YOUR_DATASET_2, …, YOUR_DATASET_N' --gpu '0' --network 'resnet101-solar-best.pth' --K-nearest-neighbour 100
+   ```
    - The datasets and network should be exactly the same as the ones you choose when running offline.py
    - Use neighbour search methods if necessary. But do not include `--ifgenerate` since the required data/structures have been generated.
    - After running a link will appear, click and operate on the GUI interface. Upload the query image and wait for the results.
