@@ -13,7 +13,7 @@ from torchvision import transforms
 
 from src.networks.imageretrievalnet import init_network, extract_vectors, extr_selfmade_dataset
 from src.datasets.testdataset import configdataset
-from src.utils.general import get_data_root
+from src.utils.general import load_path_features
 from src.utils.networks import load_network
 from src.utils.nnsearch import *
 
@@ -88,11 +88,9 @@ dim_vec = 2048
 vecs = np.empty((dim_vec, 0))
 img_paths = []
 for dataset in datasets:
-    file_path_feature = 'outputs/features/' + dataset + '_path_feature.pkl'
-    with open(file_path_feature, 'rb') as pickle_file:
-        path_feature = pickle.load(pickle_file)
-    vecs = np.concatenate([vecs, path_feature['feature']], axis=1)
-    images = ['/static/' + i for i in path_feature['path']]
+    vecs_temp, img_r_path_temp = load_path_features(dataset)
+    vecs = np.concatenate([vecs, vecs_temp], axis=1)
+    images = ['/static/' + i for i in img_r_path_temp]
     img_paths = img_paths + images
 
 # During the offline procedure, qvec doesn't matter. It can be anything since the construction of tree, graph, etc does not
