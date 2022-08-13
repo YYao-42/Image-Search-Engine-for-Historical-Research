@@ -12,16 +12,9 @@
             {% if query_path %}
             <img src="{{ query_path }}" width="160px">
             {% endif %}
-            <h3>Preliminary results:</h3>
-            {% for score in scores %} 
-            <figure style="float: left; margin-right: 5px; margin-bottom: 5px;">
-                <img src="{{ score[1] }}" height="155px">
-                <!-- <figcaption>{{ score[0] }}</figcaption> -->
-            </figure>
-            {% endfor %}
         </div>
         <div class="container">
-            <h3>Results of re-ranking:</h3>
+            <h3>Results:</h3>
             {% for mark in marks %} 
             <figure style="float: left; margin-right: 5px; margin-bottom: 5px;">
                 <img src="{{ mark[1] }}" height="155px">
