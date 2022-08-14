@@ -10,10 +10,10 @@ This work is a combination of three master's thesis projects. Welcome to check o
 - [ ] *Add the link to the publication if the work is eventually published*
 - [ ] *Add the link to the interface if the work is integrated into [EHM](https://engineeringhistoricalmemory.com/Aggregators.php)*
 
-**Note: It is true that there are many code files, but most of them are written for the convenience of testing modules. Only a small number of files are needed to use our model and reproduce our results, refer to the detailed description below.**
+**Note: It is true that there are many code files, but most of them are written for the convenience of testing modules. Only a small number of files are needed to use our model and reproduce our results, refer to the detailed descriptions below.**
 
 ## To simply use the pretrained models directly:
-- [ ] Add a directory tree
+
 1. [Create and activate a virtual python environment](https://docs.python.org/3/library/venv.html)
 2. Install packages using requirements.txt  
    `pip install -r requirements.txt`  
@@ -104,7 +104,7 @@ You can choose from three re-ranking methods (QGE, SAHA, and LoFTR), the impleme
 - LoFTR 
    `loftr(loftr_weight_path, query_num, qimages, ranks, images, dataset, gnd)`
 
-Useful information can be found in the code comments.
+Useful information can be found in the code comments in src/utils/Reranking.py and src/test_reranking.py.
 
 </p>
 </details>
