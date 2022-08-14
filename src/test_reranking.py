@@ -95,7 +95,7 @@ for dataset in datasets:
     RW = False # For datasets (smaller than 120,000), turn it on (True), else, turn it off (False).
 
     # Query and Gallery Enhancement
-    QGE(ranks, qvecs, vecs, dataset, gnd, query_num, cache_dir, gnd_path2, AQE)
+    QGE(ranks, qvecs, vecs, dataset, gnd, cache_dir, gnd_path2, AQE)
 
     # Query Expansion 2 (average)
     # average_query_expansion(qvecs, vecs, K, dataset, gnd)
