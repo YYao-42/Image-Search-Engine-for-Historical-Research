@@ -103,6 +103,9 @@ You can choose from three re-ranking methods (QGE, SAHA, and LoFTR), the impleme
    `sift_online(query_num, qimages, sift_q_main_path, images, sift_g_main_path, ranks, dataset, gnd)`
 - LoFTR 
    `loftr(loftr_weight_path, query_num, qimages, ranks, images, dataset, gnd)`
+   
+If you want to use LoFTR, you need to download the pretrained LoFTR weight from: https://github.com/zju3dv/LoFTR  
+You can put the LoFTR weight under this path: src/utils/weights/  
 
 Useful information can be found in the code comments in src/utils/Reranking.py and src/test_reranking.py.
 
