@@ -10,6 +10,7 @@ This work is a combination of three master's thesis projects. Welcome to check o
 - [ ] *Add the link to the publication if the work is eventually published*
 - [ ] *Add the link to the interface if the work is integrated into [EHM](https://engineeringhistoricalmemory.com/Aggregators.php)*
 
+**Note: It is true that there are many code files, but most of them are written for the convenience of testing modules. Only a small number of files are needed to use our model and reproduce our results, refer to the detailed description below.**
 
 ## To simply use the pretrained models directly:
 - [ ] Add a directory tree
@@ -43,7 +44,7 @@ This work is a combination of three master's thesis projects. Welcome to check o
 <p>
 If you want to retrain the model yourself, the example training script is located in src/main_train.py.  
 To train the model, you should firstly make sure you have downloaded the training datasets Sfm120k or GoogleLandmarksv2 in data/train/, then you can start training by running
-  
+
 ```bash
    python3 -m src.main_train [-h] [--training-dataset DATASET] [--no-val]
                 [--test-datasets DATASETS] [--test-whiten DATASET]
@@ -75,7 +76,7 @@ To train the model, you should firstly make sure you have downloaded the trainin
 
 <details><summary><b>List of nearest neighbour search methods you can choose from</b></summary>
 <p>
-Implementations of all nearest neighbour search methods can be found in src/utils/nnsearch.py. (Not all of them are integrated into the final system.)  
+Nearest neighbour search methods are necessary for large-scale datasets (>100k). Implementations of all nearest neighbour search methods can be found in src/utils/nnsearch.py. (Not all of them are integrated into the final system.)  
 
 - Product Quantization (`--matching_method 'PQ'`)  
    `matching_Nano_PQ(K, embedded_features_train, embedded_features_test, dataset, N_books=16, n_bits_perbook=8, ifgenerate=True)`
@@ -85,21 +86,36 @@ Implementations of all nearest neighbour search methods can be found in src/util
    `matching_HNSW(K, embedded_features_train, embedded_features_test, dataset, m=4, ef=8, ifgenerate=True)`
 - Product Quantization + Hierarchical Navigable Small World (`--matching_method 'PQ_HNSW'`)  
    `matching_HNSW_NanoPQ(K, embedded_features, embedded_features_test, dataset, N_books=16, N_words=256, m=4, ef=8, ifgenerate=True)`
+
 See the code comments for the meaning of the variables.  
 Recommondation: ANNOY (efficient), HNSW (accurate), PQ+HNSW (only when memory is an issue)
 
 </p>
 </details>
 
+<details><summary><b>List of re-ranking methods you can choose from</b></summary>
+<p>
+You can choose from three re-ranking methods (QGE, SAHA, and LoFTR), the implementations of which can be found in src/utils/Reranking.py. The default one is QGE. 
 
+- QGE
+   `QGE(ranks, qvecs, vecs, dataset, gnd, cache_dir, gnd_path2, AQE)`
+- SAHA
+   `sift_online(query_num, qimages, sift_q_main_path, images, sift_g_main_path, ranks, dataset, gnd)`
+- LoFTR 
+   `loftr(loftr_weight_path, query_num, qimages, ranks, images, dataset, gnd)`
 
-<details><summary><b>Test</b></summary>
+Useful information can be found in the code comments.
+
+</p>
+</details>
+
+<!-- <details><summary><b>Test</b></summary>
 <p>
 Firstly, please make sure you have downloaded the test datasets and put them under ~/data/test/.
 Then you can start retrieval tests as following:
 
 
-<!-- ### Testing on R-Oxford, R-Paris
+### Testing on R-Oxford, R-Paris
 
 ```ruby
    python3 -m ~src.main_retrieve
@@ -121,9 +137,8 @@ You can view the automatically generated example ranking images in ~outputs/rank
 ```ruby
    python3 -m ~src.test_GLM
 ```
-You can view the automatically generated example ranking images in ~outputs/ranks/. Also, the extracted feature files are automatically saved in ~outputs/features/. -->
+You can view the automatically generated example ranking images in ~outputs/ranks/. Also, the extracted feature files are automatically saved in ~outputs/features/.
 
-### Testing re-ranking methods
 You can use three re-ranking methods (QGE, SAHA, and LoFTR) in any datasets in the following python files:
 ```ruby
    python3 -m ~src.test_extracted # This is an example of our pipeline. You can test any datasets with this file.
@@ -159,10 +174,4 @@ You can put the LoFTR weight under this path: src/utils/weights/
 You can find detailed annotations about how to use these re-ranking methods in Reranking.py, test_extracted.py and server.py.  
 
 </p>
-</details>
-<details><summary><b>Retrieval Engine</b></summary>
-<p>
-
-
-</p>
-</details>
+</details> -->
