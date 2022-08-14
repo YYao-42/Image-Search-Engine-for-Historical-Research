@@ -167,10 +167,10 @@ sift_online(query_num, qimages, sift_q_main_path, images, sift_g_main_path, rank
 For LoFTR: 
 ```ruby
 loftr(loftr_weight_path, query_num, qimages, ranks, images, dataset, gnd)  
-```
+
 If you want to use LoFTR, you need to download the pretrained LoFTR weight from: https://github.com/zju3dv/LoFTR  
 You can put the LoFTR weight under this path: src/utils/weights/  
-
+```
 You can find detailed annotations about how to use these re-ranking methods in Reranking.py, test_extracted.py and server.py.  
 
 </p>
