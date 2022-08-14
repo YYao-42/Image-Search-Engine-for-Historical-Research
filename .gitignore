@@ -13,5 +13,6 @@ src/utils/src/loftr/__pycache__
 src/utils/src/loftr/backbone/__pycache__
 src/utils/src/loftr/loftr_module/__pycache__
 src/utils/src/loftr/utils/__pycache__
+src/diffusion/tmp/
 .vscode/
 resnet101-solar-best.pth_vecs_revisitop1m.pt
