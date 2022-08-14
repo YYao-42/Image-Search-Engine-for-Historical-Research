@@ -212,7 +212,7 @@ def QGE(ranks, qvecs, vecs, dataset, gnd, query_num, cache_dir, gnd_path2, RW, A
        w = 8. / 2
        it_times = 3
        
-       qvecs_qe, ranks_aqe = feature_enhancement(it_times, k, ranks, vecs, w)
+       qvecs_qe, ranks_aqe = feature_enhancement(it_times, k, ranks, qvecs, vecs, w)
        T_qe_2=time.time()
     #    print('mAP after Enhancement')
     #    compute_map_and_print2(dataset, ranks_aqe, gnd) 
