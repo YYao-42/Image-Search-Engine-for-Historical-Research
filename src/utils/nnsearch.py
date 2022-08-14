@@ -485,6 +485,19 @@ class HNSW(object):
 
 
 def matching_HNSW(K, embedded_features_train, embedded_features_test, dataset, m=4, ef=8, ifgenerate=True):
+    '''
+        Inputs: 
+            K: number of nearest neighbours
+            embedded_features_train: feature vectors of the dataset images
+            embedded_features_test: feature vectors of the query images
+            dataset: name of the dataset
+            m: number of established connections
+            ef: size of the dynamic candidate list efConstruction
+            ifgenerate: if the codewords have been generated
+        Outputs: 
+            idx: the indices of the top-K nearest neighbours
+            time_per_query: average mathching time per query
+    '''
     num_train, feature_len = embedded_features_train.shape
     num_test, _ = embedded_features_test.shape
     if not os.path.exists('outputs/' + dataset):
@@ -570,6 +583,21 @@ def matching_HNSW_PQ(K, Codewords, embedded_features_test, CW_idx):
 
 
 def matching_HNSW_NanoPQ(K, embedded_features, embedded_features_test, dataset, N_books=16, N_words=256, m=4, ef=8, ifgenerate=True):
+    '''
+        Inputs: 
+            K: number of nearest neighbours
+            embedded_features_train: feature vectors of the dataset images
+            embedded_features_test: feature vectors of the query images
+            dataset: name of the dataset
+            N_books: number of sub-vectors/sub-codebooks
+            N_words: number of sub-codewords per sub-codebook
+            m: number of established connections
+            ef: size of the dynamic candidate list efConstruction
+            ifgenerate: if the codewords have been generated
+        Outputs: 
+            idx: the indices of the top-K nearest neighbours
+            time_per_query: average mathching time per query
+    '''
     # normalization
     eftrain_norm = np.linalg.norm(embedded_features, axis=1)
     eftrain_norm = np.expand_dims(eftrain_norm, axis=1)
@@ -817,6 +845,19 @@ def Nano_PQ(embedded_features, N_books, N_words):
     return embedded_code, Codewords, embedded_recon
 
 def matching_Nano_PQ(K, embedded_features_train, embedded_features_test, dataset, N_books=16, n_bits_perbook=8, ifgenerate=True):
+    '''
+        Inputs: 
+            K: number of nearest neighbours
+            embedded_features_train: feature vectors of the dataset images
+            embedded_features_test: feature vectors of the query images
+            dataset: name of the dataset
+            N_books: number of the sub-vectors/sub-codebooks
+            n_bits_perbook: number of bits per sub-codebook
+            ifgenerate: if the codewords have been generated
+        Outputs: 
+            idx: the indices of the top-K nearest neighbours
+            time_per_query: average mathching time per query
+    '''
     # https://nanopq.readthedocs.io/en/latest/source/tutorial.html#basic-of-pq
     N_words = 2**n_bits_perbook
     num_train, feature_len = embedded_features_train.shape
@@ -973,6 +1014,19 @@ def matching_Greedyhash(K, hash_codes_train, hash_codes_test):
 
 
 def matching_ANNOY(K, embedded_features_train, embedded_features_test, metric, dataset, n_trees=100, ifgenerate=True):
+    '''
+        Inputs: 
+            K: number of nearest neighbours
+            embedded_features_train: feature vectors of the dataset images
+            embedded_features_test: feature vectors of the query images
+            metric: distance metric, e.g., hamming, euclidean
+            dataset: name of the dataset
+            n_trees: number of trees
+            ifgenerate: if the trees have been generated
+        Outputs: 
+            idx: the indices of the top-K nearest neighbours
+            time_per_query: average mathching time per query
+    '''
     num_train, feature_len = embedded_features_train.shape
     num_test, _ = embedded_features_test.shape
     

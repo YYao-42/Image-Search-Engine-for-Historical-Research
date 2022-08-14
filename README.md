@@ -19,7 +19,7 @@ This work is a combination of three master's thesis projects. Welcome to check o
    Faiss needs to be installed manually: `pip install faiss-gpu`  
    The torch version and cuda version should be compatible
 3. Download the pretrained network from https://drive.google.com/drive/folders/1JbGNvQgqKm7GiUvOqw1DSncSVR3k0xbm?usp=sharing and save it under data/networks
-4. Change the paths in function `extr_selfmade_dataset` (src/networks/imageretrievalnet.py) to the paths of your datasets (which are just folers contain jpg images)
+4. Change the paths in function `extr_selfmade_dataset` (src/networks/imageretrievalnet.py) to the paths of your datasets (which are just folders contain jpg images)
 5. [Create symbolic link](https://www.freecodecamp.org/news/symlink-tutorial-in-linux-how-to-create-and-remove-a-symbolic-link/) to map your datasets under static/test/
 6. Run offline.py to extract and save the features of images  
    ```bash
@@ -39,18 +39,12 @@ This work is a combination of three master's thesis projects. Welcome to check o
 ## If you want to tweak the model or reproduce our results:
 
 
-<details><summary><b>Training</b></summary>
-
+<details><summary><b>To retrain the model</b></summary>
 <p>
-
-We have already trained the model "Resnet101-solar-best" with good results, which is stored at https://drive.google.com/drive/folders/1JbGNvQgqKm7GiUvOqw1DSncSVR3k0xbm?usp=sharing. We recommend that you use ths pre-trained model. If you want to use our pre-trined model, download it and place it in ~/data/networks/ , then skip the following instructions directly to next part.
-
-If you wish to retrain the model yourself, the Example training script is located in ~/src/main_train.py
-
-To train the model, you should firstly make sure you have downloaded the training datasets Sfm120k or GoogleLandmarksv2 in  ~/data/train/, then you can start the training with the settings described in the paper by running
-
-```ruby
-   python3 -m main_train [-h] [--training-dataset DATASET] [--no-val]
+If you want to retrain the model yourself, the example training script is located in src/main_train.py.  
+To train the model, you should firstly make sure you have downloaded the training datasets Sfm120k or GoogleLandmarksv2 in data/train/, then you can start training by running
+```bash
+   python3 -m src.main_train [-h] [--training-dataset DATASET] [--no-val]
                 [--test-datasets DATASETS] [--test-whiten DATASET]
                 [--test-freq N] [--arch ARCH] [--pool POOL]
                 [--local-whitening] [--regional] [--whitening]
@@ -65,13 +59,43 @@ To train the model, you should firstly make sure you have downloaded the trainin
 </p>
 </details>
 
+<details><summary><b>To reproduce the results</b></summary>
+<p>
+```bash
+   python3 -m src.test_rOP1m
+```
+- Add `--include1m` if you want to include 1 million distractors. Before that download the pre-extracted feature vectors of the 1 million distractors via https://drive.google.com/file/d/1A8CEAXkMZ_o3zl1IRzQ_RSclciLhkTVY/view?usp=sharing. (Save it wherever you want, but do not forget to change the path in test_rOP1m.py)
+- Add `--ifextracted` if the features of images in revisited Oxford and Paris have already been extracted.
+
+</p>
+</details>
+
+<details><summary><b>List of nearest neighbour search methods you can choose from</b></summary>
+<p>
+Implementations of all nearest neighbour search methods can be found in src/utils/nnsearch.py. (Not all of them are integrated into the final system.)  
+- Product Quantization (`--matching_method 'PQ'`)  
+   `matching_Nano_PQ(K, embedded_features_train, embedded_features_test, dataset, N_books=16, n_bits_perbook=8, ifgenerate=True)`
+- ANNOY (`--matching_method 'ANNOY'`)  
+   `matching_ANNOY(K, embedded_features_train, embedded_features_test, metric, dataset, n_trees=100, ifgenerate=True)`
+- Hierarchical Navigable Small World (`--matching_method 'HNSW'`)  
+   `matching_HNSW(K, embedded_features_train, embedded_features_test, dataset, m=4, ef=8, ifgenerate=True)`
+- Product Quantization + Hierarchical Navigable Small World (`--matching_method 'PQ_HNSW'`)  
+   `matching_HNSW_NanoPQ(K, embedded_features, embedded_features_test, dataset, N_books=16, N_words=256, m=4, ef=8, ifgenerate=True)`
+See the code comments for the meaning of the variables.  
+Recommondation: ANNOY (efficient), HNSW (accurate), PQ+HNSW (only when memory is an issue)
+
+</p>
+</details>
+
+
+
 <details><summary><b>Test</b></summary>
 <p>
 Firstly, please make sure you have downloaded the test datasets and put them under ~/data/test/.
 Then you can start retrieval tests as following:
 
 
-### Testing on R-Oxford, R-Paris
+<!-- ### Testing on R-Oxford, R-Paris
 
 ```ruby
    python3 -m ~src.main_retrieve
@@ -93,7 +117,7 @@ You can view the automatically generated example ranking images in ~outputs/rank
 ```ruby
    python3 -m ~src.test_GLM
 ```
-You can view the automatically generated example ranking images in ~outputs/ranks/. Also, the extracted feature files are automatically saved in ~outputs/features/.
+You can view the automatically generated example ranking images in ~outputs/ranks/. Also, the extracted feature files are automatically saved in ~outputs/features/. -->
 
 ### Testing re-ranking methods
 You can use three re-ranking methods (QGE, SAHA, and LoFTR) in any datasets in the following python files:
@@ -115,7 +139,7 @@ To test re-ranking methods, you can use the following api in the aforementioned 
 
 For QGE:
 ```ruby
-QGE(ranks, qvecs, vecs, dataset, gnd, query_num, cache_dir, gnd_path2, RW, AQE)  
+QGE(ranks, qvecs, vecs, dataset, gnd, cache_dir, gnd_path2, AQE)  
 ```
 For SAHA: 
 ```ruby
