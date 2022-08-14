@@ -99,6 +99,7 @@ def main():
 
         # prepare config structure for the test dataset
         cfg = configdataset(dataset, os.path.join(get_data_root(), 'test'))
+        gnd=cfg['gnd']
         images = [cfg['im_fname'](cfg,i) for i in range(cfg['n'])]
         images_r_path = [os.path.relpath(path, get_data_root()) for path in images]
         qimages = [cfg['qim_fname'](cfg,i) for i in range(cfg['nq'])]
@@ -144,7 +145,8 @@ def main():
             os.makedirs('src/diffusion/tmp/'+ dataset)
         cache_dir = 'src/diffusion/tmp/' + dataset
         gnd_path2 = 'data/test/' + dataset + '/gnd_' + dataset + '.pkl'
-        QGE(ranks, qvecs, vecs, dataset, gnd, cache_dir, gnd_path2, AQE=True)
+        AQE = True
+        QGE(ranks, qvecs, vecs, dataset, gnd, cache_dir, gnd_path2, AQE)
 
         print('>> {}: elapsed time: {}'.format(dataset, htime(time.time()-start)))
 
