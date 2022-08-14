@@ -144,7 +144,7 @@ def main():
             os.makedirs('src/diffusion/tmp/'+ dataset)
         cache_dir = 'src/diffusion/tmp/' + dataset
         gnd_path2 = 'data/test/' + dataset + '/gnd_' + dataset + '.pkl'
-        QGE(ranks, qvecs, vecs, dataset, cfg['gnd'], cache_dir, gnd_path2, AQE=True)
+        QGE(ranks, qvecs, vecs, dataset, gnd, cache_dir, gnd_path2, AQE=True)
 
         print('>> {}: elapsed time: {}'.format(dataset, htime(time.time()-start)))
 
