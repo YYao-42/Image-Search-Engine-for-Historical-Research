@@ -163,7 +163,7 @@ To test re-ranking methods, you can use the following api in the aforementioned 
 
 For QGE:
 ```ruby
-QGE(ranks, qvecs, vecs, dataset, gnd, cache_dir, gnd_path2, AQE)  
+QGE(ranks, qvecs, vecs, dataset, gnd, cache_dir, gnd_path2, AQE, RW)  
 ```
 For SAHA: 
 ```ruby
