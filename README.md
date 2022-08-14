@@ -98,7 +98,7 @@ Recommondation: ANNOY (efficient), HNSW (accurate), PQ+HNSW (only when memory is
 You can choose from three re-ranking methods (QGE, SAHA, and LoFTR), the implementations of which can be found in src/utils/Reranking.py. The default one is QGE. 
 
 - QGE
-   `QGE(ranks, qvecs, vecs, dataset, gnd, cache_dir, gnd_path2, AQE)`
+   `QGE(ranks, qvecs, vecs, dataset, gnd, cache_dir, gnd_path2, AQE, RW)`
 - SAHA
    `sift_online(query_num, qimages, sift_q_main_path, images, sift_g_main_path, ranks, dataset, gnd)`
 - LoFTR 
