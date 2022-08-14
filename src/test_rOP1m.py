@@ -42,6 +42,8 @@ parser.add_argument('--soa-layers', type=str, default='45',
                     help='config soa blocks for second-order attention')
 parser.add_argument('--include1m', '-1m', dest='include1m', action='store_true',
                     help='Whether include 1 million distractors')
+parser.add_argument('--ifextracted', '-extracted', dest='ifextracted', action='store_true',
+                    help='Whether the features have been extracted')
 
 # GPU ID
 parser.add_argument('--gpu-id', '-g', default='0', metavar='N',
@@ -95,8 +97,6 @@ def main():
     for dataset in datasets:
         start = time.time()
 
-        print('>> {}: Extracting...'.format(dataset))
-
         # prepare config structure for the test dataset
         cfg = configdataset(dataset, os.path.join(get_data_root(), 'test'))
         images = [cfg['im_fname'](cfg,i) for i in range(cfg['n'])]
@@ -108,33 +108,43 @@ def main():
         except:
             bbxs = None  # for holidaysmanrot and copydays
 
-        # extract database and query vectors
-        # print('>> {}: database images...'.format(dataset))
-        # vecs = extract_vectors(net, images, args.image_size, transform, ms=ms, mode='test')
-        # vecs = vecs.numpy()
+        if not args.ifextracted:
+            # extract database and query vectors
 
-        # print('>> {}: query images...'.format(dataset))
-        # qvecs = extract_vectors(net, qimages, args.image_size, transform, bbxs=bbxs, ms=ms, mode='test')
-        # qvecs = qvecs.numpy()
+            print('>> {}: Extracting...'.format(dataset))
 
-        print('>> {}: Evaluating...'.format(dataset))
+            print('>> {}: database images...'.format(dataset))
+            vecs = extract_vectors(net, images, args.image_size, transform, ms=ms, mode='test')
+            vecs = vecs.numpy()
 
-        # save_path_feature(dataset + '_db', vecs, images_r_path)
-        # save_path_feature(dataset + '_query', qvecs, qimages_r_path)
+            print('>> {}: query images...'.format(dataset))
+            qvecs = extract_vectors(net, qimages, args.image_size, transform, bbxs=bbxs, ms=ms, mode='test')
+            qvecs = qvecs.numpy()
 
-        vecs, _ = load_path_features(dataset + '_db')
-        qvecs, _ = load_path_features(dataset + '_query')
+            save_path_feature(dataset + '_db', vecs, images_r_path)
+            save_path_feature(dataset + '_query', qvecs, qimages_r_path)
+        else:
+            vecs, _ = load_path_features(dataset + '_db')
+            qvecs, _ = load_path_features(dataset + '_query')
 
         if args.include1m: # whether to include 1 million distractors
             vecs_1m = torch.load(args.network + '_vecs_' + 'revisitop1m' + '.pt')
             vecs_1m = vecs_1m.numpy()
             vecs = np.concatenate([vecs, vecs_1m], axis=1)
 
+        print('>> {}: Evaluating...'.format(dataset))
+
         # search, rank, and print
         scores = np.dot(vecs.T, qvecs)
         ranks = np.argsort(-scores, axis=0)
-        ranks = qge1(ranks, qvecs, vecs, K)
-        compute_map_and_print(dataset, ranks, cfg['gnd'])
+
+        # re-rank
+        isExist = os.path.exists('src/diffusion/tmp/'+ dataset)
+        if not isExist:
+            os.makedirs('src/diffusion/tmp/'+ dataset)
+        cache_dir = 'src/diffusion/tmp/' + dataset
+        gnd_path2 = 'data/test/' + dataset + '/gnd_' + dataset + '.pkl'
+        QGE(ranks, qvecs, vecs, dataset, cfg['gnd'], cache_dir, gnd_path2, AQE=True)
 
         print('>> {}: elapsed time: {}'.format(dataset, htime(time.time()-start)))
 

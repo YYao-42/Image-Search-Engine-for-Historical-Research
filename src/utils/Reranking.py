@@ -189,7 +189,7 @@ fast and accurate.
 
 We use diffusion from: https://github.com/fyang93/diffusion
 '''
-def QGE(ranks, qvecs, vecs, dataset, gnd, query_num, cache_dir, gnd_path2, RW, AQE):
+def QGE(ranks, qvecs, vecs, dataset, gnd, cache_dir, gnd_path2, AQE):
     def feature_enhancement(it_times, k, ranks, qvecs, vecs, w):
         for it_time in range(it_times):
             qe_weight = (np.arange(k, 0, -1) / k).reshape(1, k, 1) # build an array, [1, 1/2, ..., 1/k]
@@ -205,7 +205,9 @@ def QGE(ranks, qvecs, vecs, dataset, gnd, query_num, cache_dir, gnd_path2, RW, A
             ranks_aqe = np.argsort(-scores_aqe, axis=0)
         return qvecs_qe, ranks_aqe
 
-    if RW == True: 
+    query_num = qvecs.shape[1]
+    database_num = vecs.shape[1]
+    if database_num < 120000: 
     # For database with less than 120,000 images and there are a lot of (high ratio) correct images, we use this setting to improve accuracy.
        T_qe_1=time.time()
        k = 10 # k refers to top k results in preliminary ranks
