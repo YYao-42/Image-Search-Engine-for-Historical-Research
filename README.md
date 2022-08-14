@@ -43,6 +43,7 @@ This work is a combination of three master's thesis projects. Welcome to check o
 <p>
 If you want to retrain the model yourself, the example training script is located in src/main_train.py.  
 To train the model, you should firstly make sure you have downloaded the training datasets Sfm120k or GoogleLandmarksv2 in data/train/, then you can start training by running
+  
 ```bash
    python3 -m src.main_train [-h] [--training-dataset DATASET] [--no-val]
                 [--test-datasets DATASETS] [--test-whiten DATASET]
@@ -61,9 +62,11 @@ To train the model, you should firstly make sure you have downloaded the trainin
 
 <details><summary><b>To reproduce the results</b></summary>
 <p>
+  
 ```bash
    python3 -m src.test_rOP1m
 ```
+
 - Add `--include1m` if you want to include 1 million distractors. Before that download the pre-extracted feature vectors of the 1 million distractors via https://drive.google.com/file/d/1A8CEAXkMZ_o3zl1IRzQ_RSclciLhkTVY/view?usp=sharing. (Save it wherever you want, but do not forget to change the path in test_rOP1m.py)
 - Add `--ifextracted` if the features of images in revisited Oxford and Paris have already been extracted.
 
@@ -73,6 +76,7 @@ To train the model, you should firstly make sure you have downloaded the trainin
 <details><summary><b>List of nearest neighbour search methods you can choose from</b></summary>
 <p>
 Implementations of all nearest neighbour search methods can be found in src/utils/nnsearch.py. (Not all of them are integrated into the final system.)  
+
 - Product Quantization (`--matching_method 'PQ'`)  
    `matching_Nano_PQ(K, embedded_features_train, embedded_features_test, dataset, N_books=16, n_bits_perbook=8, ifgenerate=True)`
 - ANNOY (`--matching_method 'ANNOY'`)  
