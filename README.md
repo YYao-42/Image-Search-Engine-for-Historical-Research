@@ -4,7 +4,7 @@ We have designed and implemented an image-based query search engine that strikes
 ![pipeline](https://user-images.githubusercontent.com/76591676/181504716-76a20f35-3485-4489-8f81-1104651e2c05.png)
 
 This work is a combination of three master's thesis projects. Welcome to check out our theses via the following links:
-- [x] Yanan Hu (Feature extraction): https://repository.tudelft.nl/islandora/object/uuid%3Ae0d2bc46-3caa-43ae-b83f-37b830757eac
+- [x] Yanan Hu (Feature Extraction): https://repository.tudelft.nl/islandora/object/uuid%3Ae0d2bc46-3caa-43ae-b83f-37b830757eac
 - [x] Yuanyuan Yao (Nearest neighbour search): https://repository.tudelft.nl/islandora/object/uuid:4a2c9c6f-b2b8-41d6-9b70-69c4f246c964
 - [x] Qi Zhang (Re-ranking): https://repository.tudelft.nl/islandora/object/uuid%3A32e02913-ba0d-446a-9807-1129ba4a314b
 - [ ] *Add the link to the publication if the work is eventually published*
