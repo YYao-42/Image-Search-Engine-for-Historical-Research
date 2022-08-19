@@ -106,6 +106,8 @@ You can choose from three re-ranking methods (QGE, SAHA, and LoFTR), the impleme
    
 If you want to use QGE, you need to create a path (the name of the dataset) under 'src/diffusion/tmp'.  
    
+If you change the database, please delete the cache of the previous Random Walk.
+   
 If you want to use LoFTR, you need to download the pretrained LoFTR weight from: https://github.com/zju3dv/LoFTR  
 You can put the LoFTR weight under this path: src/utils/weights/  
 
