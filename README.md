@@ -1,4 +1,4 @@
-# Codebase for Image-Based Query Search Engine
+# Codebase for Image-Based Query Search Engine 1
 
 We have designed and implemented an image-based query search engine that strikes a good balance between efficiency and accuracy. Users can submit any image they want to search for, and the engine will return similar images in a custom database. The main components of the system are shown in the following diagram:
 ![pipeline](https://user-images.githubusercontent.com/76591676/181504716-76a20f35-3485-4489-8f81-1104651e2c05.png)
