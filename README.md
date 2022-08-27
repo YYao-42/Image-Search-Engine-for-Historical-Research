@@ -70,6 +70,7 @@ To train the model, you should firstly make sure you have downloaded the trainin
 
 - Add `--include1m` if you want to include 1 million distractors. Before that download the pre-extracted feature vectors of the 1 million distractors via https://drive.google.com/file/d/1A8CEAXkMZ_o3zl1IRzQ_RSclciLhkTVY/view?usp=sharing. (Save it wherever you want, but do not forget to change the path in test_rOP1m.py)
 - Add `--ifextracted` if the features of images in revisited Oxford and Paris have already been extracted.
+- Choose test mode by specifying `--mode`. Use `--mode 'mAP'` (default) to reproduce the results of mean average precision, and use `--mode 'num_images_to_be_retrieved'` to reproduce the results of retrieval time. E.g., with `--mode '100'` you can get the retrieval time of top-100 results. It is recommended to first use `--mode 'mAP'` and then `--mode 'num_images_to_be_retrieved' --ifextracted` to mimic the offline-online procedure.
 
 </p>
 </details>
