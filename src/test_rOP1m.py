@@ -31,6 +31,8 @@ parser.add_argument('--datasets', '-d', metavar='DATASETS', default='roxford5k,r
                     help="comma separated list of test datasets: " +
                         " | ".join(datasets_names) +
                         " (default: 'roxford5k,rparis6k')")
+parser.add_argument('--mode', '-md', metavar='MODE', default='mAP',
+                    help="test mode: mAP ('mAP') or retrieval time of top K results ('K')")
 parser.add_argument('--image-size', '-imsize', dest='image_size', default=1024, type=int, metavar='N',
                     help="maximum size of longer image side used for testing (default: 1024)")
 parser.add_argument('--multiscale', '-ms', metavar='MULTISCALE', default='[1, 2**(1/2), 1/2**(1/2)]',
@@ -95,7 +97,7 @@ def main():
     # evaluate on test datasets
     datasets = args.datasets.split(',')
     for dataset in datasets:
-        start = time.time()
+        # start = time.time()
 
         # prepare config structure for the test dataset
         cfg = configdataset(dataset, os.path.join(get_data_root(), 'test'))
@@ -118,9 +120,12 @@ def main():
             vecs = extract_vectors(net, images, args.image_size, transform, ms=ms, mode='test')
             vecs = vecs.numpy()
 
+            start_query_extra = time.time()
             print('>> {}: query images...'.format(dataset))
             qvecs = extract_vectors(net, qimages, args.image_size, transform, bbxs=bbxs, ms=ms, mode='test')
             qvecs = qvecs.numpy()
+            end_query_extra = time.time()
+            print('>> {}: average extraction time: {}'.format(dataset, htime(end_query_extra-start_query_extra)/qvecs.shape[1]))
 
             save_path_feature(dataset + '_db', vecs, images_r_path)
             save_path_feature(dataset + '_query', qvecs, qimages_r_path)
@@ -136,8 +141,22 @@ def main():
         print('>> {}: Evaluating...'.format(dataset))
 
         # search, rank, and print
-        scores = np.dot(vecs.T, qvecs)
-        ranks = np.argsort(-scores, axis=0)
+        if args.mode == 'mAP':
+            # rank all the images in the database
+            # ignore the printed matching time in this setting
+            n_database = vecs.shape[1]
+            K = n_database
+            ifgenerate = True
+        else:
+            # retrieve top-K images in the database
+            # ignore the printed mAP in this setting
+            ifgenerate = False
+            K = int(args.mode)
+        # match_idx, time_per_query = matching_L2(K, vecs.T, qvecs.T)
+        match_idx, time_per_query = matching_ANNOY(K, vecs.T, qvecs.T, 'euclidean', dataset, n_trees=100, ifgenerate=ifgenerate)
+        ranks = match_idx.T
+        print('>> {}: average matching time: {}'.format(dataset, time_per_query))
+        compute_map_and_print2(dataset, ranks, gnd)
 
         # re-rank
         isExist = os.path.exists('src/diffusion/tmp/'+ dataset)
@@ -148,7 +167,7 @@ def main():
         AQE = True
         QGE(ranks, qvecs, vecs, dataset, gnd, cache_dir, gnd_path2, AQE)
 
-        print('>> {}: elapsed time: {}'.format(dataset, htime(time.time()-start)))
+        # print('>> {}: elapsed time: {}'.format(dataset, htime(time.time()-start)))
 
 
 if __name__ == '__main__':
