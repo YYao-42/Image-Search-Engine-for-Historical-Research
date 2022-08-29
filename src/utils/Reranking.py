@@ -632,6 +632,8 @@ this method: it is not fast enough. And its performance is not very good under c
 situations. Therefore, we develop SAHA. We use AffNet and HardNet to improve features.
 
 This method is a benchmark method.
+
+Reference code: https://github.com/cavalli1234/AdaLAM
 '''
 def ransac_sift(query_num, qimages, images, ranks, dataset, gnd):
     
