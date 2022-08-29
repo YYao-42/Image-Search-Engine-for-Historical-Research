@@ -120,6 +120,8 @@ def sift_online(query_num, qimages, sift_q_main_path, images, sift_g_main_path, 
 This is LoFTR. LoFTR was an image matching method. We modified it and made it as a re-ranking method.
 LoFTR can be a little more accurate than SAHA. However, it is impossible to implement the offline/online
 design on it. Therefore it is slower than SAHA.
+
+The original LoFTR code is from: https://github.com/zju3dv/LoFTR
 '''
 def loftr(loftr_weight_path, query_num, qimages, ranks, images, dataset, gnd):
     _default_cfg = deepcopy(default_cfg)
