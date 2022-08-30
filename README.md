@@ -7,7 +7,6 @@ This work is a combination of three master's thesis projects. Welcome to check o
 - [x] Yanan Hu (Feature Extraction): https://repository.tudelft.nl/islandora/object/uuid%3Ae0d2bc46-3caa-43ae-b83f-37b830757eac
 - [x] Yuanyuan Yao (Nearest neighbour search): https://repository.tudelft.nl/islandora/object/uuid:4a2c9c6f-b2b8-41d6-9b70-69c4f246c964
 - [x] Qi Zhang (Re-ranking): https://repository.tudelft.nl/islandora/object/uuid%3A32e02913-ba0d-446a-9807-1129ba4a314b
-- [ ] *Add the link to the publication if the work is eventually published*
 - [ ] *Add the link to the interface if the work is integrated into [EHM](https://engineeringhistoricalmemory.com/Aggregators.php)*
 
 **Note: It is true that there are many code files, but most of them are written for the convenience of testing modules. Only a small number of files are needed to use our model and reproduce our results, refer to the detailed descriptions below.**
