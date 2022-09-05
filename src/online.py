@@ -109,7 +109,7 @@ def index():
         img = Image.open(file.stream)  # PIL image
         if not os.path.exists("src/static/uploaded/"):
             os.makedirs("src/static/uploaded/")
-        uploaded_img_path = "src/static/upload/" + dt.now().isoformat().replace(":", ".") + "_" + file.filename
+        uploaded_img_path = "src/static/uploaded/" + dt.now().isoformat().replace(":", ".") + "_" + file.filename
         img.save(uploaded_img_path)
         query_path = '/' + '/'.join(uploaded_img_path.split('/')[1:])
         print(query_path)
