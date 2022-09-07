@@ -37,7 +37,8 @@ parser.add_argument('--K-nearest-neighbour', '-K', default=30, type=int, metavar
 parser.add_argument('--matching_method', '-mm', default='L2', help="select matching methods: L2, PQ, ANNOY, HNSW, PQ_HNSW")
 parser.add_argument('--ifgenerate', '-gen', dest='ifgenerate', action='store_true',
                     help='Include --ifgenerate if the trees/graphs/distance tables have not been generated and saved')
-
+parser.add_argument('--NoGPU', '-nogpu', dest='NoGPU', action='store_true',
+                    help='Diasable GPU')
 # GPU ID
 parser.add_argument('--gpu-id', '-g', default='0', metavar='N',
                     help="gpu id used for testing (default: '0')")
@@ -48,7 +49,8 @@ warnings.filterwarnings("ignore", category=UserWarning)
 args = parser.parse_args()
 
 # setting up the visible GPU
-os.environ['CUDA_VISIBLE_DEVICES'] = args.gpu_id
+if not args.NoGPU:
+    os.environ['CUDA_VISIBLE_DEVICES'] = args.gpu_id
 
 # loading network
 net = load_network(network_name=args.network)
@@ -63,7 +65,8 @@ ms = list(eval(args.multiscale))
 print(">>>> Evaluating scales: {}".format(ms))
 
 # moving network to gpu and eval mode
-net.cuda()
+if not args.NoGPU:
+    net.cuda()
 net.eval()
 
 # set up the transform
@@ -82,7 +85,7 @@ transform = transforms.Compose([
 datasets = args.datasets.split(',')
 for dataset in datasets:
     print('>> {}: Extracting...'.format(dataset))
-    extr_selfmade_dataset(net, dataset, args.image_size, transform, ms)
+    extr_selfmade_dataset(net, dataset, args.image_size, transform, ms, NoGPU=args.NoGPU)
 
 dim_vec = 2048
 vecs = np.empty((dim_vec, 0))
@@ -95,7 +98,7 @@ for dataset in datasets:
 
 # During the offline procedure, qvec doesn't matter. It can be anything since the construction of tree, graph, etc does not
 # depend on qvec. Similar for K.
-qvec = np.zeros((dim_vec, 1))
+qvec = np.ones((dim_vec, 1))
 K = args.K_nearest_neighbour
 
 # Note: parameters like N_books, n_bits_perbook, n_trees, etc will significantly influence the retrieval performance and efficiency

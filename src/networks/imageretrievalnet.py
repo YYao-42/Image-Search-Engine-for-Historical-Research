@@ -353,9 +353,10 @@ def init_network(params):
 
     return net
 
-def extract_vectors(net, images, image_size, transform, bbxs=None, ms=[1], msp=1, print_freq=10, summary=None, mode='test'):
+def extract_vectors(net, images, image_size, transform, bbxs=None, ms=[1], msp=1, print_freq=10, summary=None, mode='test', NoGPU=False):
     # moving network to gpu and eval mode
-    net.cuda()
+    if not NoGPU:
+        net.cuda()
     net.eval()
 
     # creating dataset loader
@@ -369,7 +370,8 @@ def extract_vectors(net, images, image_size, transform, bbxs=None, ms=[1], msp=1
         vecs = torch.zeros(net.meta['outputdim'], len(images))
         with tqdm(total=len(images)) as pbar:
             for i, _input in enumerate(loader):
-                _input = _input.cuda()
+                if not NoGPU:
+                    _input = _input.cuda()
 
                 if len(ms) == 1 and ms[0] == 1:
                     vecs[:, i] = extract_ss(net, _input)
@@ -383,9 +385,10 @@ def extract_vectors(net, images, image_size, transform, bbxs=None, ms=[1], msp=1
 
     return vecs
 
-def extract_vectors_single(net, image, image_size, transform, bbxs=None, ms=[1], msp=1):
+def extract_vectors_single(net, image, image_size, transform, bbxs=None, ms=[1], msp=1, NoGPU=False):
     # moving network to gpu and eval mode
-    net.cuda()
+    if not NoGPU:
+        net.cuda()
     net.eval()
 
     input = pil_loader(image)
@@ -395,7 +398,8 @@ def extract_vectors_single(net, image, image_size, transform, bbxs=None, ms=[1],
 
     # extracting vectors
     with torch.no_grad():
-        input = input.cuda()
+        if not NoGPU:
+            input = input.cuda()
 
         if len(ms) == 1 and ms[0] == 1:
             vec = extract_ss(net, input)
@@ -404,7 +408,7 @@ def extract_vectors_single(net, image, image_size, transform, bbxs=None, ms=[1],
 
     return vec
 
-def extr_selfmade_dataset(net, selfmadedataset, image_size, transform, ms=[1], msp=1):
+def extr_selfmade_dataset(net, selfmadedataset, image_size, transform, ms=[1], msp=1, NoGPU=False):
     if selfmadedataset == 'GLM/test':
         path_head = '/home/yuanyuanyao/data/test/GLM/'
         df = pd.read_csv(path_head + 'retrieval_solution_v2.1.csv', usecols= ['id','images'])
@@ -417,7 +421,7 @@ def extr_selfmade_dataset(net, selfmadedataset, image_size, transform, ms=[1], m
         images, img_r_path = path_all_jpg(folder_path, start="/home/yuanyuanyao/data")
     # extract database vectors
     print('>> {}: images...'.format(selfmadedataset))
-    vecs = extract_vectors(net, images, image_size, transform, ms=ms, msp=msp)
+    vecs = extract_vectors(net, images, image_size, transform, ms=ms, msp=msp, NoGPU=NoGPU)
     # convert to numpy
     vecs = vecs.numpy()
     save_path_feature(selfmadedataset, vecs, img_r_path)

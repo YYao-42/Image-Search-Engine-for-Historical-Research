@@ -26,6 +26,7 @@ This work is a combination of three master's thesis projects. Welcome to check o
    python3 -m src.offline --datasets 'YOUR_DATASET_1, YOUR_DATASET_2, …, YOUR_DATASET_N' --gpu '0' --network 'resnet101-solar-best.pth' --K-nearest-neighbour 100
    ```
    - The datasets will be merged to be your database. Given a query image, the engine will find the most similar images in the database.
+   - If no GPU is available, replace `--gpu '0'` by `--NoGPU`.
    - If the database is large-scale (>100k), then you may need to use approximate nearest neighbour search methods, e.g., ANNOY.  Select it by adding `--matching_method 'ANNOY' --ifgenerate` after the original command. It is normal that offline.py runs for a long time (even for days if the database is million-scale and HNSW or PQ_HNSW is chosen).
    - Still, pay attention to the paths of the outputs. You can find and modify the settings in functions save_path_feature and load_path_feature (src/utils/general.py).
 7. Run online.py  
@@ -33,6 +34,7 @@ This work is a combination of three master's thesis projects. Welcome to check o
    python3 -m src.online --datasets 'YOUR_DATASET_1, YOUR_DATASET_2, …, YOUR_DATASET_N' --gpu '0' --network 'resnet101-solar-best.pth' --K-nearest-neighbour 100
    ```
    - The datasets and network should be exactly the same as the ones you choose when running offline.py
+   - If no GPU is available, replace `--gpu '0'` by `--NoGPU`.
    - Use neighbour search methods if necessary. But do not include `--ifgenerate` since the required data/structures have been generated.
    - After running a link will appear, click and operate on the GUI interface. Upload the query image and wait for the results.
 

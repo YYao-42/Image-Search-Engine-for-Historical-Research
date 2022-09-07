@@ -35,8 +35,8 @@ class KNN(BaseKNN):
         super().__init__(database, method)
         self.index = {'cosine': faiss.IndexFlatIP,
                       'euclidean': faiss.IndexFlatL2}[method](self.D)
-        if os.environ.get('CUDA_VISIBLE_DEVICES'):
-            self.index = faiss.index_cpu_to_all_gpus(self.index)
+        # if os.environ.get('CUDA_VISIBLE_DEVICES'):
+        #     self.index = faiss.index_cpu_to_all_gpus(self.index)
         self.add()
 
 

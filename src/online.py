@@ -33,6 +33,8 @@ parser.add_argument('--K-nearest-neighbour', '-K', default=30, type=int, metavar
 parser.add_argument('--matching_method', '-mm', default='L2', help="select matching methods: L2, PQ, ANNOY, HNSW, PQ_HNSW")
 parser.add_argument('--ifgenerate', '-gen', dest='ifgenerate', action='store_true',
                     help='Include --ifgenerate if the trees/graphs/distance tables have not been generated and saved')
+parser.add_argument('--NoGPU', '-nogpu', dest='NoGPU', action='store_true',
+                    help='Diasable GPU')
 parser.add_argument('--image-size', '-imsize', dest='image_size', default=1024, type=int, metavar='N',
                     help="maximum size of longer image side used for testing (default: 1024)")
 parser.add_argument('--multiscale', '-ms', metavar='MULTISCALE', default='[1, 2**(1/2), 1/2**(1/2)]',
@@ -55,7 +57,8 @@ args = parser.parse_args()
 app = Flask(__name__)
 
 # setting up the visible GPU
-os.environ['CUDA_VISIBLE_DEVICES'] = args.gpu_id
+if not args.NoGPU:
+    os.environ['CUDA_VISIBLE_DEVICES'] = args.gpu_id
 
 # loading network
 net = load_network(network_name=args.network)
@@ -68,7 +71,8 @@ ms = list(eval(args.multiscale))
 print(">>>> Evaluating scales: {}".format(ms))
 
 # moving network to gpu and eval mode
-net.cuda()
+if not args.NoGPU:
+    net.cuda()
 net.eval()
 
 # set up the transform
@@ -113,7 +117,9 @@ def index():
         img.save(uploaded_img_path)
         query_path = '/' + '/'.join(uploaded_img_path.split('/')[1:])
         print(query_path)
-        qvec = extract_vectors_single(net, uploaded_img_path, args.image_size, transform, ms=ms)
+        t_start = time.time()
+        qvec = extract_vectors_single(net, uploaded_img_path, args.image_size, transform, ms=ms, NoGPU=args.NoGPU)
+        print('Extraction time:', time.time()-t_start)
         qvec = np.expand_dims(qvec.numpy(), axis=1)
 
         # Run search
@@ -144,6 +150,7 @@ def index():
 
         # scores1 = [(id, img_paths[id]) for id in np.squeeze(match_idx)[:10]]
         scores2 = [(rel_img_paths[id], img_paths[id]) for id in np.squeeze(idx2)[:K]]
+        print('Overall time: ', time.time()-t_start)
         return render_template('index.html', 
                                query_path=query_path,
                             #    scores=scores1,
